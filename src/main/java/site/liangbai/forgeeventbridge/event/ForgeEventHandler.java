@@ -38,18 +38,13 @@ public @interface ForgeEventHandler {
         Class<?> value() default None.class;
 
         /**
-         * 例如: com.craftingdead.core.event.GunEvent$HitBlock
+         * Example: com.craftingdead.core.event.GunEvent$HitBlock
          *
-         * @return 类文件名称
+         * @return Class name
          */
         String source() default "";
     }
 
-    /**
-     * 仅仅用于标记不通过value属性来查找监听目标类.
-     *
-     * @author Liangbai
-     */
     class None { }
 
     enum Bus {

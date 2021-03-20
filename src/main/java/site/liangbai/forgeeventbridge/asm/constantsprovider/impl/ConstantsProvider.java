@@ -21,11 +21,10 @@ package site.liangbai.forgeeventbridge.asm.constantsprovider.impl;
 import site.liangbai.forgeeventbridge.asm.constantsprovider.Constant;
 import site.liangbai.forgeeventbridge.asm.constantsprovider.IConstantsProvider;
 
-import java.util.EnumMap;
 import java.util.HashMap;
 
 public final class ConstantsProvider implements IConstantsProvider {
-    private static final EnumMap<Constant, String> constantStringEnumMap = new EnumMap<>(new HashMap<>());
+    private static final HashMap<Constant, String> constantStringEnumMap = new HashMap<>();
 
     static {
         put(Constant.EVENT_HOLDER_CLASS_NAME, "Lsite/liangbai/forgeeventbridge/event/EventHolder;");
