@@ -22,4 +22,6 @@ public final class WrapperCreators {
     public static final ObjectWrapperCreator OBJECT = new ObjectWrapperCreator();
 
     public static final EventWrapperCreator<?> EVENT = new EventWrapperCreator<>();
+
+    public static final EntityWrapperCreator ENTITY = new EntityWrapperCreator();
 }

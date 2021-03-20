@@ -22,4 +22,12 @@ import site.liangbai.forgeeventbridge.wrapper.EventWrapper;
 
 public interface EventHandler<T extends EventWrapper.EventObject> {
     void handle(EventWrapper<T> eventWrapper);
+
+    default void register() {
+        EventRegistry.register(this);
+    }
+
+    default void unregister() {
+        EventRegistry.unregister(this);
+    }
 }

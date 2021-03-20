@@ -99,7 +99,7 @@ public final class EventWrapper<T extends EventWrapper.EventObject> extends Obje
                 return returnValue;
             }
 
-            return proxy.invoke(obj, args);
+            return proxy.invokeSuper(obj, args);
         }
     }
 

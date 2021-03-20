@@ -86,7 +86,7 @@ public final class EventHandlerClassCreator implements Opcodes {
 
             ForgeEventHandler.Target target = forgeEventHandler.value();
 
-            ClassWriter cw = new ClassWriter(0);
+            ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
             FieldVisitor fv;
             MethodVisitor mv;
             AnnotationVisitor av0;

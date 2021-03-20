@@ -31,7 +31,7 @@ import java.util.Map;
 public final class EventRegistry {
     private static final Map<EventHandler<?>, Object> eventHandlerToListenObj = new HashMap<>();
 
-    public static void addListener(EventHandler<?> eventHolder) {
+    public static void register(EventHandler<?> eventHolder) {
         ForgeEventHandler forgeEventHandler = eventHolder.getClass().getAnnotation(ForgeEventHandler.class);
 
         if (forgeEventHandler == null) {
@@ -41,9 +41,9 @@ public final class EventRegistry {
         Class<?> eventProxyClass = EventHandlerClassCreator.createNewEventHandlerClass(eventHolder);
 
         try {
-            Constructor<?> constructor = eventProxyClass.getDeclaredConstructor();
+            Constructor<?> constructor = eventProxyClass.getDeclaredConstructor(EventHandler.class);
 
-            Object listenObj = constructor.newInstance();
+            Object listenObj = constructor.newInstance(eventHolder);
 
             for (ForgeEventHandler.Bus bus : forgeEventHandler.bus()) {
                 switch (bus) {
@@ -70,5 +70,7 @@ public final class EventRegistry {
         MinecraftForge.EVENT_BUS.unregister(listenObj);
 
         FMLJavaModLoadingContext.get().getModEventBus().unregister(listenObj);
+
+        eventHandlerToListenObj.remove(eventHolder);
     }
 }
