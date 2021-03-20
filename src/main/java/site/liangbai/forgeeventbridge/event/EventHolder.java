@@ -20,7 +20,7 @@ package site.liangbai.forgeeventbridge.event;
 
 import site.liangbai.forgeeventbridge.wrapper.EventWrapper;
 
-public interface EventHandler<T extends EventWrapper.EventObject> {
+public interface EventHolder<T extends EventWrapper.EventObject> {
     void handle(EventWrapper<T> eventWrapper);
 
     default void register() {

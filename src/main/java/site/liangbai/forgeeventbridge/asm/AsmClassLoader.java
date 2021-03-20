@@ -18,6 +18,12 @@
 
 package site.liangbai.forgeeventbridge.asm;
 
+import site.liangbai.forgeeventbridge.util.ClassLoaderUtil;
+import site.liangbai.forgeeventbridge.util.Reflection;
+
+import java.lang.reflect.Field;
+import java.util.Vector;
+
 public class AsmClassLoader extends ClassLoader {
     public static final AsmClassLoader INSTANCE = new AsmClassLoader();
 
@@ -33,5 +39,22 @@ public class AsmClassLoader extends ClassLoader {
                 classBuffer.length,
                 AsmClassLoader.class.getProtectionDomain()
         );
+    }
+
+    @SuppressWarnings("unchecked")
+    public static void addClassToClassLoader(Class<?> clazz, ClassLoader classLoader) {
+        Field field = Reflection.findFieldOrNull(classLoader.getClass(), "classes");
+
+        if (field != null) {
+            Vector<Class<?>> classes = (Vector<Class<?>>) Reflection.getFieldObjOrNull(Reflection.setAccessible(field), EventHolderProxyCreator.class.getClassLoader());
+
+            if (classes != null) {
+                classes.addElement(clazz);
+            }
+        }
+    }
+
+    public static void addClassToClassLoader(Class<?> clazz) {
+        addClassToClassLoader(clazz, ClassLoaderUtil.getClassLoader());
     }
 }

@@ -20,7 +20,7 @@ package site.liangbai.forgeeventbridge.event;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import site.liangbai.forgeeventbridge.asm.EventHandlerClassCreator;
+import site.liangbai.forgeeventbridge.asm.EventHolderProxyCreator;
 import site.liangbai.forgeeventbridge.asm.UnknownEventHandlerClassError;
 
 import java.lang.reflect.Constructor;
@@ -29,19 +29,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class EventRegistry {
-    private static final Map<EventHandler<?>, Object> eventHandlerToListenObj = new HashMap<>();
+    private static final Map<EventHolder<?>, Object> eventHolderToListenObj = new HashMap<>();
 
-    public static void register(EventHandler<?> eventHolder) {
+    public static void register(EventHolder<?> eventHolder) {
         ForgeEventHandler forgeEventHandler = eventHolder.getClass().getAnnotation(ForgeEventHandler.class);
 
         if (forgeEventHandler == null) {
             throw new UnknownEventHandlerClassError("could not find annotation: ForgeEventHandler in class: " + eventHolder.getClass().getSimpleName());
         }
 
-        Class<?> eventProxyClass = EventHandlerClassCreator.createNewEventHandlerClass(eventHolder);
+        Class<?> eventProxyClass = EventHolderProxyCreator.createNewEventHandlerClass(eventHolder);
 
         try {
-            Constructor<?> constructor = eventProxyClass.getDeclaredConstructor(EventHandler.class);
+            Constructor<?> constructor = eventProxyClass.getDeclaredConstructor(EventHolder.class);
 
             Object listenObj = constructor.newInstance(eventHolder);
 
@@ -56,21 +56,21 @@ public final class EventRegistry {
                 }
             }
 
-            eventHandlerToListenObj.put(eventHolder, listenObj);
+            eventHolderToListenObj.put(eventHolder, listenObj);
         } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             e.printStackTrace();
         }
     }
 
-    public static void unregister(EventHandler<?> eventHolder) {
-        if (!eventHandlerToListenObj.containsKey(eventHolder)) return;
+    public static void unregister(EventHolder<?> eventHolder) {
+        if (!eventHolderToListenObj.containsKey(eventHolder)) return;
 
-        Object listenObj = eventHandlerToListenObj.get(eventHolder);
+        Object listenObj = eventHolderToListenObj.get(eventHolder);
 
         MinecraftForge.EVENT_BUS.unregister(listenObj);
 
         FMLJavaModLoadingContext.get().getModEventBus().unregister(listenObj);
 
-        eventHandlerToListenObj.remove(eventHolder);
+        eventHolderToListenObj.remove(eventHolder);
     }
 }
