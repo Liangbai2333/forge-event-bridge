@@ -46,7 +46,7 @@ public class AsmClassLoader extends ClassLoader {
         Field field = Reflection.findFieldOrNull(classLoader.getClass(), "classes");
 
         if (field != null) {
-            Vector<Class<?>> classes = (Vector<Class<?>>) Reflection.getFieldObjOrNull(Reflection.setAccessible(field), EventHolderProxyCreator.class.getClassLoader());
+            Vector<Class<?>> classes = (Vector<Class<?>>) Reflection.getFieldObjOrNull(Reflection.setAccessible(field), classLoader);
 
             if (classes != null) {
                 classes.addElement(clazz);

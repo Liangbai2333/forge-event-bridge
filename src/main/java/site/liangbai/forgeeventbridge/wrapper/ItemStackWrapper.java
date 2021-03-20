@@ -16,20 +16,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package site.liangbai.forgeeventbridge.wrapper.creator;
+package site.liangbai.forgeeventbridge.wrapper;
 
-public final class WrapperCreators {
-    public static final ObjectWrapperCreator OBJECT = new ObjectWrapperCreator();
+import org.bukkit.World;
 
-    public static final EventWrapperCreator<?> EVENT = new EventWrapperCreator<>();
+public class ItemStackWrapper  extends ObjectWrapper {
 
-    public static final EntityWrapperCreator ENTITY = new EntityWrapperCreator();
 
-    public static final PlayerWrapperCreator PLAYER = new PlayerWrapperCreator();
+    public ItemStackWrapper(Object object) {
+        super(object);
+    }
 
-    public static final LocationWrapperCreator LOCATION = new LocationWrapperCreator();
-
-    public static final ItemStackWrapperCreator ITEM_STACK = new ItemStackWrapperCreator();
-
-    public static final WorldWrapperCreator WORLD = new WorldWrapperCreator();
+    public World asWorld() {
+        return (World) WrapperTransformer.require(World.class, getObject());
+    }
 }

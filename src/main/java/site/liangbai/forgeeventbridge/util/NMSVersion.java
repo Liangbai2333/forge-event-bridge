@@ -16,20 +16,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package site.liangbai.forgeeventbridge.wrapper.creator;
+package site.liangbai.forgeeventbridge.util;
 
-public final class WrapperCreators {
-    public static final ObjectWrapperCreator OBJECT = new ObjectWrapperCreator();
+import org.bukkit.Bukkit;
 
-    public static final EventWrapperCreator<?> EVENT = new EventWrapperCreator<>();
+public final class NMSVersion {
+    public static String VERSION;
 
-    public static final EntityWrapperCreator ENTITY = new EntityWrapperCreator();
+    static {
+        VERSION = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+    }
 
-    public static final PlayerWrapperCreator PLAYER = new PlayerWrapperCreator();
+    public static Class<?> getCraftBukkitClassOrNull(String className) {
+        return Reflection.findClassOrNull("org.bukkit.craftbukkit." + VERSION + "." + className);
+    }
 
-    public static final LocationWrapperCreator LOCATION = new LocationWrapperCreator();
-
-    public static final ItemStackWrapperCreator ITEM_STACK = new ItemStackWrapperCreator();
-
-    public static final WorldWrapperCreator WORLD = new WorldWrapperCreator();
+    public static Class<?> getNMSClassOrNull(String className) {
+        return Reflection.findClassOrNull("net.minecraft.server." + VERSION + "." + className);
+    }
 }

@@ -30,7 +30,7 @@ public @interface ForgeEventHandler {
 
     EventPriority priority() default EventPriority.NORMAL;
 
-    Bus[] bus() default Bus.FORGE;
+    Bus bus() default Bus.FORGE;
 
     boolean receiveCanceled() default false;
 

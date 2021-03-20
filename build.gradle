@@ -7,6 +7,7 @@ buildscript {
 		
         jcenter()
     }
+
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: "${forge_gradle_version}"
     }
@@ -25,8 +26,56 @@ sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = co
 group = 'site.liangbai'
 version = "1.0"
 
+println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
+
 minecraft {
     mappings channel: 'official', version: "${minecraft_version}"
+
+    runs {
+        client {
+            workingDirectory project.file('run')
+
+            property 'forge.logging.markers', 'REGISTRIES'
+
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                forgeeventbridge {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run')
+
+            property 'forge.logging.markers', 'REGISTRIES'
+
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                forgeeventbridge {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        data {
+            workingDirectory project.file('run')
+
+            property 'forge.logging.markers', 'REGISTRIES'
+
+            property 'forge.logging.console.level', 'debug'
+
+            args '--mod', 'forgeeventbridge', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+
+            mods {
+                forgeeventbridge {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
 }
     
 repositories {
@@ -34,7 +83,7 @@ repositories {
 
     jcenter()
 
-    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    maven { url = 'http://lss233.littleservice.cn/repositories/minecraft/' }
 }
 
 configurations {
@@ -50,16 +99,21 @@ dependencies {
     // https://mvnrepository.com/artifact/cglib/cglib
     shaded group: 'cglib', name: 'cglib', version: '3.3.0'
 
-    implementation "org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT@jar"
-    implementation 'org.jetbrains:annotations:19.0.0'
+    implementation group: 'org.spigotmc', name: 'spigot', version: '1.16.5-R0.1-SNAPSHOT'
+    implementation group: 'org.jetbrains', name: 'annotations', version: '19.0.0'
 }
 	
 jar.finalizedBy('reobfJar') 
 	
 jar {
-	baseName = project.name
-    appendix = minecraft_version
-		
+    manifest {
+        attributes([
+                "Implementation-Title": project.name,
+                "Implementation-Version": project.version,
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+
 	from {
 		configurations.shaded.collect { it.isDirectory() ? it : zipTree(it) }
 	}

@@ -45,15 +45,13 @@ public final class EventRegistry {
 
             Object listenObj = constructor.newInstance(eventHolder);
 
-            for (ForgeEventHandler.Bus bus : forgeEventHandler.bus()) {
-                switch (bus) {
-                    case FORGE:
-                        MinecraftForge.EVENT_BUS.register(listenObj);
-                        break;
-                    case MOD:
-                        FMLJavaModLoadingContext.get().getModEventBus().register(listenObj);
-                        break;
-                }
+            switch (forgeEventHandler.bus()) {
+                case FORGE:
+                    MinecraftForge.EVENT_BUS.register(listenObj);
+                    break;
+                case MOD:
+                    FMLJavaModLoadingContext.get().getModEventBus().register(listenObj);
+                    break;
             }
 
             eventHolderToListenObj.put(eventHolder, listenObj);

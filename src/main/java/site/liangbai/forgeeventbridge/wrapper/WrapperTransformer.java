@@ -18,10 +18,13 @@
 
 package site.liangbai.forgeeventbridge.wrapper;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.World;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import site.liangbai.forgeeventbridge.util.NMSVersion;
 import site.liangbai.forgeeventbridge.util.Reflection;
 
 import java.lang.reflect.Method;
@@ -58,6 +61,30 @@ public final class WrapperTransformer {
 
             return obj;
         });
+
+        wrapperTransformer.put(Type.ITEM_STACK, obj -> {
+            if (obj instanceof ItemStack) {
+                Class<?> craftItemStackClass = NMSVersion.getCraftBukkitClassOrNull("inventory.CraftItemStack");
+
+                Method method = Reflection.findMethodOrNull(craftItemStackClass, "asBukkitCopy", ItemStack.class);
+
+                return Reflection.invokeMethodOrNull(method, null, obj);
+            }
+
+            return obj;
+        });
+
+        wrapperTransformer.put(Type.WORLD, obj -> {
+            if (obj instanceof World) {
+                Class<?> nmsWorld = NMSVersion.getNMSClassOrNull("World");
+
+                Method method = Reflection.findMethodOrNull(nmsWorld, "getWorld");
+
+                return Reflection.invokeMethodOrNull(method, obj);
+            }
+
+            return obj;
+        });
     }
 
     public static Object require(Class<?> requireType, Object otherObj) {
@@ -69,6 +96,14 @@ public final class WrapperTransformer {
             return wrapperTransformer.get(Type.LOCATION).apply(otherObj);
         }
 
+        if (isAssignableFrom(org.bukkit.inventory.ItemStack.class, requireType)) {
+            return wrapperTransformer.get(Type.ITEM_STACK).apply(otherObj);
+        }
+
+        if (isAssignableFrom(org.bukkit.World.class, requireType)) {
+            return wrapperTransformer.get(Type.WORLD).apply(otherObj);
+        }
+
         return otherObj;
     }
 
@@ -78,10 +113,8 @@ public final class WrapperTransformer {
 
     private enum Type {
         ENTITY,
-        BLOCK,
         WORLD,
         ITEM_STACK,
-        LOCATION,
-        MINECRAFT_SERVER
+        LOCATION
     }
 }

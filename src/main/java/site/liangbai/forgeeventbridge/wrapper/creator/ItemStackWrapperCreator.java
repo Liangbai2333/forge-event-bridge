@@ -18,18 +18,14 @@
 
 package site.liangbai.forgeeventbridge.wrapper.creator;
 
-public final class WrapperCreators {
-    public static final ObjectWrapperCreator OBJECT = new ObjectWrapperCreator();
+import net.minecraft.item.ItemStack;
+import site.liangbai.forgeeventbridge.wrapper.ItemStackWrapper;
 
-    public static final EventWrapperCreator<?> EVENT = new EventWrapperCreator<>();
+public final class ItemStackWrapperCreator implements IWrapperCreator<ItemStackWrapper> {
+    @Override
+    public ItemStackWrapper create(Object object) {
+        if (!(object instanceof ItemStack)) return null;
 
-    public static final EntityWrapperCreator ENTITY = new EntityWrapperCreator();
-
-    public static final PlayerWrapperCreator PLAYER = new PlayerWrapperCreator();
-
-    public static final LocationWrapperCreator LOCATION = new LocationWrapperCreator();
-
-    public static final ItemStackWrapperCreator ITEM_STACK = new ItemStackWrapperCreator();
-
-    public static final WorldWrapperCreator WORLD = new WorldWrapperCreator();
+        return new ItemStackWrapper(object);
+    }
 }
