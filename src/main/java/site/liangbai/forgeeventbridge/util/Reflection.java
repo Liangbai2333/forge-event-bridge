@@ -32,6 +32,18 @@ public final class Reflection {
         }
     }
 
+    public static Class<?> findClassOrNull(String name, ClassLoader classLoader) {
+        return findClassOrNull(name, false, classLoader);
+    }
+
+    public static Class<?> findClassOrNull(String name, boolean initialize, ClassLoader classLoader) {
+        try {
+            return Class.forName(name, initialize, classLoader);
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
+    }
+
     public static <T extends AccessibleObject> T setAccessible(T accessibleObject) {
         if (!accessibleObject.isAccessible()) {
             accessibleObject.setAccessible(true);

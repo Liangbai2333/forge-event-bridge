@@ -26,6 +26,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
 public final class EventWrapper<T extends EventWrapper.EventObject> extends ObjectWrapper {
@@ -50,6 +52,23 @@ public final class EventWrapper<T extends EventWrapper.EventObject> extends Obje
     }
 
     private static class EventObjectProxyGenerator<T extends EventObject> implements MethodInterceptor {
+        private static final List<Class<?>> ignoredClasses = new LinkedList<>();
+
+        static {
+            registerIgnoredClassType(Boolean.class);
+            registerIgnoredClassType(Character.class);
+            registerIgnoredClassType(Integer.class);
+            registerIgnoredClassType(Long.class);
+            registerIgnoredClassType(Short.class);
+            registerIgnoredClassType(Float.class);
+            registerIgnoredClassType(Double.class);
+            registerIgnoredClassType(Byte.class);
+        }
+
+        public static void registerIgnoredClassType(Class<?> clazz) {
+            ignoredClasses.add(clazz);
+        }
+
         private final Object event;
 
         public EventObjectProxyGenerator(Object event) {
@@ -92,7 +111,8 @@ public final class EventWrapper<T extends EventWrapper.EventObject> extends Obje
                     returnValue = WrapperTransformer.require(returnType, returnValue);
                 }
 
-                if (!returnType.isInstance(returnValue)) {
+                if (!returnType.isInstance(returnValue)
+                        && !ignoredClasses.contains(returnValue.getClass()) && !Object.class.equals(returnType)) {
                     throw new UnknownTransformerTypeError("can not transfer the type: " + returnValue.getClass().getSimpleName() + " to " + returnType.getSimpleName());
                 }
 

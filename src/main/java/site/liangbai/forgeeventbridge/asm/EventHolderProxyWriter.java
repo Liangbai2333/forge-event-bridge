@@ -98,13 +98,14 @@ public class EventHolderProxyWriter extends ClassWriter implements Opcodes {
         // Write by self start.
         mv.visitFieldInsn(GETSTATIC, constantsProvider.get(Constant.WRAPPER_CREATORS_CLASS_NAME_L), "EVENT", constantsProvider.get(Constant.EVENT_WRAPPER_CREATOR_CLASS_NAME));
         mv.visitVarInsn(ALOAD, 1);
-        mv.visitMethodInsn(INVOKEINTERFACE, constantsProvider.get(Constant.WRAPPER_CREATOR_CLASS_NAME_L), "create", "(Ljava/lang/Object;)Ljava/lang/Object;", true);
+        mv.visitMethodInsn(INVOKEINTERFACE, constantsProvider.get(Constant.WRAPPER_CREATOR_CLASS_NAME_L), "create", "(Ljava/lang/Object;)" + constantsProvider.get(Constant.OBJECT_WRAPPER_CLASS_NAME), true);
         mv.visitVarInsn(ASTORE, 2);
 
         mv.visitVarInsn(ALOAD, 0);
         mv.visitFieldInsn(GETFIELD, className, "object", constantsProvider.get(Constant.EVENT_HOLDER_CLASS_NAME));
         mv.visitVarInsn(ALOAD, 2);
-        mv.visitMethodInsn(INVOKEINTERFACE, constantsProvider.get(Constant.EVENT_HOLDER_CLASS_NAME_L), "handle", "(Ljava/lang/Object;)V", true);
+        mv.visitTypeInsn(CHECKCAST, constantsProvider.get(Constant.EVENT_WRAPPER_CLASS_NAME_L));
+        mv.visitMethodInsn(INVOKEINTERFACE, constantsProvider.get(Constant.EVENT_HOLDER_CLASS_NAME_L), "handle", "(" + constantsProvider.get(Constant.EVENT_WRAPPER_CLASS_NAME) + ")V", true);
 
         // Write by self end.
         mv.visitInsn(RETURN);
@@ -113,6 +114,7 @@ public class EventHolderProxyWriter extends ClassWriter implements Opcodes {
         mv.visitLocalVariable("event", targetClassName, null, l0, l1, 1);
         mv.visitMaxs(3, 3);
         mv.visitEnd();
+
     }
 
     private void writeListenAnnotationForMethod(MethodVisitor mv) {

@@ -37,11 +37,7 @@ public final class EventHolderProxyCreator {
 
         byte[] classBuffer = generator.generate(className);
 
-        Class<?> eventProxy = AsmClassLoader.createNewClass(className, classBuffer);
-
-        AsmClassLoader.addClassToClassLoader(eventProxy);
-
-        return eventProxy;
+        return AsmClassLoader.createNewClass(className, classBuffer);
     }
 
     private static class Generator {

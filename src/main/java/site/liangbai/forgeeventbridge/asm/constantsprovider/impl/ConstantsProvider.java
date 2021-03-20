@@ -34,6 +34,9 @@ public final class ConstantsProvider implements IConstantsProvider {
         put(Constant.EVENT_WRAPPER_CREATOR_CLASS_NAME, "Lsite/liangbai/forgeeventbridge/wrapper/creator/EventWrapperCreator;");
         put(Constant.WRAPPER_CREATOR_CLASS_NAME_L, "site/liangbai/forgeeventbridge/wrapper/creator/IWrapperCreator");
         put(Constant.WRAPPER_CREATORS_CLASS_NAME_L, "site/liangbai/forgeeventbridge/wrapper/creator/WrapperCreators");
+        put(Constant.OBJECT_WRAPPER_CLASS_NAME, "Lsite/liangbai/forgeeventbridge/wrapper/ObjectWrapper;");
+        put(Constant.EVENT_WRAPPER_CLASS_NAME, "Lsite/liangbai/forgeeventbridge/wrapper/EventWrapper;");
+        put(Constant.EVENT_WRAPPER_CLASS_NAME_L, "site/liangbai/forgeeventbridge/wrapper/EventWrapper");
     }
 
     private static void put(Constant constant, String value) {

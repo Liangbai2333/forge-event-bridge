@@ -18,43 +18,13 @@
 
 package site.liangbai.forgeeventbridge.asm;
 
-import site.liangbai.forgeeventbridge.util.ClassLoaderUtil;
-import site.liangbai.forgeeventbridge.util.Reflection;
+import cpw.mods.modlauncher.TransformingClassLoader;
 
-import java.lang.reflect.Field;
-import java.util.Vector;
-
-public class AsmClassLoader extends ClassLoader {
-    public static final AsmClassLoader INSTANCE = new AsmClassLoader();
-
-    public AsmClassLoader() {
-        super(AsmClassLoader.class.getClassLoader());
-    }
-
+public class AsmClassLoader {
     public static Class<?> createNewClass(String name, byte[] classBuffer) {
-        return INSTANCE.defineClass(
-                name,
-                classBuffer,
-                0,
-                classBuffer.length,
-                AsmClassLoader.class.getProtectionDomain()
-        );
-    }
+        TransformingClassLoader transformingClassLoader =
+                (TransformingClassLoader) AsmClassLoader.class.getClassLoader();
 
-    @SuppressWarnings("unchecked")
-    public static void addClassToClassLoader(Class<?> clazz, ClassLoader classLoader) {
-        Field field = Reflection.findFieldOrNull(classLoader.getClass(), "classes");
-
-        if (field != null) {
-            Vector<Class<?>> classes = (Vector<Class<?>>) Reflection.getFieldObjOrNull(Reflection.setAccessible(field), classLoader);
-
-            if (classes != null) {
-                classes.addElement(clazz);
-            }
-        }
-    }
-
-    public static void addClassToClassLoader(Class<?> clazz) {
-        addClassToClassLoader(clazz, ClassLoaderUtil.getClassLoader());
+        return transformingClassLoader.getClass(name, classBuffer);
     }
 }
