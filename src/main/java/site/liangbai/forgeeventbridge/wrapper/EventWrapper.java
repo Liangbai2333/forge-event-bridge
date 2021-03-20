@@ -23,6 +23,7 @@ import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import org.jetbrains.annotations.NotNull;
+import site.liangbai.forgeeventbridge.util.Reflection;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -86,7 +87,7 @@ public final class EventWrapper<T extends EventWrapper.EventObject> extends Obje
 
         @Override
         public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
-            for (Method eventMethod : event.getClass().getMethods()) {
+            for (Method eventMethod : event.getClass().getDeclaredMethods()) {
                 boolean isAbstract = Modifier.isAbstract(method.getModifiers());
 
                 if (!isAbstract) {
@@ -103,7 +104,7 @@ public final class EventWrapper<T extends EventWrapper.EventObject> extends Obje
                     continue;
                 }
 
-                Object returnValue = eventMethod.invoke(event, args);
+                Object returnValue = Reflection.setAccessible(eventMethod).invoke(event, args);
 
                 Class<?> returnType = method.getReturnType();
 

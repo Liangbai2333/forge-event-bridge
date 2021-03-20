@@ -21,7 +21,7 @@ package site.liangbai.forgeeventbridge.event;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import site.liangbai.forgeeventbridge.asm.EventHolderProxyCreator;
-import site.liangbai.forgeeventbridge.asm.UnknownEventHandlerClassError;
+import site.liangbai.forgeeventbridge.asm.UnknownEventHolderError;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -35,7 +35,7 @@ public final class EventRegistry {
         ForgeEventHandler forgeEventHandler = eventHolder.getClass().getAnnotation(ForgeEventHandler.class);
 
         if (forgeEventHandler == null) {
-            throw new UnknownEventHandlerClassError("could not find annotation: ForgeEventHandler in class: " + eventHolder.getClass().getSimpleName());
+            throw new UnknownEventHolderError("could not find annotation: ForgeEventHandler in class: " + eventHolder.getClass().getSimpleName());
         }
 
         Class<?> eventProxyClass = EventHolderProxyCreator.createNewEventHolderProxyClass(eventHolder);

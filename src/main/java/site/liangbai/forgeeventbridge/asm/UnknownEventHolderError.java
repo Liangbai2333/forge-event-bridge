@@ -18,8 +18,8 @@
 
 package site.liangbai.forgeeventbridge.asm;
 
-public class UnknownEventHandlerClassError extends IllegalStateException {
-    public UnknownEventHandlerClassError(String s) {
+public class UnknownEventHolderError extends IllegalStateException {
+    public UnknownEventHolderError(String s) {
         super(s);
     }
 }

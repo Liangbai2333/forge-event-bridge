@@ -41,7 +41,7 @@ public class EventHolderProxyWriter extends ClassWriter implements Opcodes {
         forgeEventHandler = eventHolder.getClass().getAnnotation(ForgeEventHandler.class);
 
         if (forgeEventHandler == null) {
-            throw new UnknownEventHandlerClassError("could not find annotation: ForgeEventHandler in class: " + eventHolder.getClass().getSimpleName());
+            throw new UnknownEventHolderError("could not find annotation: ForgeEventHandler in class: " + eventHolder.getClass().getSimpleName());
         }
 
         this.className = className;
