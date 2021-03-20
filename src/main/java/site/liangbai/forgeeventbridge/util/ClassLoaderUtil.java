@@ -27,7 +27,7 @@ public final class ClassLoaderUtil {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
         if (classLoader == null) {
-            classLoader = ClassLoaderUtil.getClassLoader();
+            classLoader = ClassLoaderUtil.class.getClassLoader();
         }
 
         return classLoader;

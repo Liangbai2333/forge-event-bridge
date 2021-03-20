@@ -18,14 +18,13 @@
 
 package site.liangbai.forgeeventbridge.asm;
 
-import org.objectweb.asm.Opcodes;
 import site.liangbai.forgeeventbridge.asm.constantsprovider.IConstantsProvider;
 import site.liangbai.forgeeventbridge.asm.constantsprovider.impl.ConstantsProvider;
 import site.liangbai.forgeeventbridge.event.EventHolder;
 import site.liangbai.forgeeventbridge.util.Reflection;
 
-public final class EventHolderProxyCreator implements Opcodes {
-    public static Class<?> createNewEventHandlerClass(EventHolder<?> eventHolder) {
+public final class EventHolderProxyCreator {
+    public static Class<?> createNewEventHolderProxyClass(EventHolder<?> eventHolder) {
         String className = "EventListener$ForgeEventBridge$" + eventHolder.hashCode();
 
         Class<?> loadedClass = Reflection.findClassOrNull(className);
@@ -45,7 +44,7 @@ public final class EventHolderProxyCreator implements Opcodes {
         return eventProxy;
     }
 
-    private static class Generator implements Opcodes {
+    private static class Generator {
         private static final IConstantsProvider CONSTANTS_PROVIDER = new ConstantsProvider();
 
         private final EventHolder<?> eventHolder;

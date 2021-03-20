@@ -38,7 +38,7 @@ public final class EventRegistry {
             throw new UnknownEventHandlerClassError("could not find annotation: ForgeEventHandler in class: " + eventHolder.getClass().getSimpleName());
         }
 
-        Class<?> eventProxyClass = EventHolderProxyCreator.createNewEventHandlerClass(eventHolder);
+        Class<?> eventProxyClass = EventHolderProxyCreator.createNewEventHolderProxyClass(eventHolder);
 
         try {
             Constructor<?> constructor = eventProxyClass.getDeclaredConstructor(EventHolder.class);
