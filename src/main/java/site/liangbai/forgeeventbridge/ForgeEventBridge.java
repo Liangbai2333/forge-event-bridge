@@ -22,5 +22,4 @@ import net.minecraftforge.fml.common.Mod;
 
 @Mod("forgeeventbridge")
 public final class ForgeEventBridge {
-
 }

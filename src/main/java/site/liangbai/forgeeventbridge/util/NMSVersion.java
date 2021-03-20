@@ -24,7 +24,13 @@ public final class NMSVersion {
     public static String VERSION;
 
     static {
-        VERSION = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+        Class<?> bukkitClass = Reflection.findClassOrNull("org.bukkit.Bukkit");
+
+        if (bukkitClass == null) {
+            VERSION = "unknown";
+        } else {
+            VERSION = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+        }
     }
 
     public static Class<?> getCraftBukkitClassOrNull(String className) {
