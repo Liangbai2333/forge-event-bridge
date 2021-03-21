@@ -58,25 +58,12 @@ public class EventHolderProxyWriter extends ClassWriter implements Opcodes {
     public void writeConstructor() {
         MethodVisitor mv = visitMethod(ACC_PUBLIC, "<init>", "(" + constantsProvider.get(Constant.EVENT_HOLDER_CLASS_NAME) + ")V", null, null);
         mv.visitCode();
-        Label l0 = new Label();
-        mv.visitLabel(l0);
-        mv.visitLineNumber(10, l0);
         mv.visitVarInsn(ALOAD, 0);
         mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
-        Label l1 = new Label();
-        mv.visitLabel(l1);
-        mv.visitLineNumber(11, l1);
         mv.visitVarInsn(ALOAD, 0);
         mv.visitVarInsn(ALOAD, 1);
         mv.visitFieldInsn(PUTFIELD, className, "object", constantsProvider.get(Constant.EVENT_HOLDER_CLASS_NAME));
-        Label l2 = new Label();
-        mv.visitLabel(l2);
-        mv.visitLineNumber(12, l2);
         mv.visitInsn(RETURN);
-        Label l3 = new Label();
-        mv.visitLabel(l3);
-        mv.visitLocalVariable("this", "L" + className + ";", null, l0, l3, 0);
-        mv.visitLocalVariable("object", "Ljava/lang/Object;", null, l0, l3, 1);
         mv.visitMaxs(2, 2);
         mv.visitEnd();
     }
@@ -91,10 +78,6 @@ public class EventHolderProxyWriter extends ClassWriter implements Opcodes {
         writeListenAnnotationForMethod(mv);
 
         mv.visitCode();
-        Label l0 = new Label();
-        mv.visitLabel(l0);
-        mv.visitLineNumber(19, l0);
-
         // Write by self start.
         mv.visitFieldInsn(GETSTATIC, constantsProvider.get(Constant.WRAPPER_CREATORS_CLASS_NAME_L), "EVENT", constantsProvider.get(Constant.EVENT_WRAPPER_CREATOR_CLASS_NAME));
         mv.visitVarInsn(ALOAD, 1);
@@ -109,12 +92,8 @@ public class EventHolderProxyWriter extends ClassWriter implements Opcodes {
 
         // Write by self end.
         mv.visitInsn(RETURN);
-        Label l1 = new Label();
-        mv.visitLabel(l1);
-        mv.visitLocalVariable("event", targetClassName, null, l0, l1, 1);
         mv.visitMaxs(3, 3);
         mv.visitEnd();
-
     }
 
     private void writeListenAnnotationForMethod(MethodVisitor mv) {
