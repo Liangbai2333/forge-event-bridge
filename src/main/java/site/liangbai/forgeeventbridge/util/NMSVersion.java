@@ -27,9 +27,7 @@ public final class NMSVersion {
         if (VERSION == null) {
             Class<?> bukkitClass = Reflection.findClassOrNull("org.bukkit.Bukkit");
 
-            if (bukkitClass == null) {
-                VERSION = "unknown";
-            } else {
+            if (bukkitClass != null) {
                 VERSION = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
             }
         }
