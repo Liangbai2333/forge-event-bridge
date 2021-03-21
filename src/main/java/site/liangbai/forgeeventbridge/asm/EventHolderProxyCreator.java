@@ -18,12 +18,16 @@
 
 package site.liangbai.forgeeventbridge.asm;
 
+import site.liangbai.forgeeventbridge.asm.classcreator.IClassCreator;
+import site.liangbai.forgeeventbridge.asm.classcreator.impl.ASMClassCreator;
 import site.liangbai.forgeeventbridge.asm.constantsprovider.IConstantsProvider;
 import site.liangbai.forgeeventbridge.asm.constantsprovider.impl.ConstantsProvider;
 import site.liangbai.forgeeventbridge.event.EventHolder;
 import site.liangbai.forgeeventbridge.util.Reflection;
 
 public final class EventHolderProxyCreator {
+    public static final IClassCreator CLASS_CREATOR = new ASMClassCreator();
+
     public static Class<?> createNewEventHolderProxyClass(EventHolder<?> eventHolder) {
         String className = "EventListener$ForgeEventBridge$" + eventHolder.hashCode();
 
@@ -37,7 +41,7 @@ public final class EventHolderProxyCreator {
 
         byte[] classBuffer = generator.generate(className);
 
-        return AsmClassLoader.createNewClass(className, classBuffer);
+        return CLASS_CREATOR.create(className, classBuffer);
     }
 
     private static class Generator {
