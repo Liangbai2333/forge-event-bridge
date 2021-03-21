@@ -98,7 +98,7 @@ public final class Reflection {
         Field field;
 
         try {
-            field = cls.getDeclaredField(name);
+            field = cls.getField(name);
 
             return Reflection.setAccessible(field);
         } catch (NoSuchFieldException e) {
@@ -110,7 +110,7 @@ public final class Reflection {
         Method method;
 
         try {
-            method = cls.getDeclaredMethod(name, params);
+            method = cls.getMethod(name, params);
 
             return Reflection.setAccessible(method);
         } catch (NoSuchMethodException e) {

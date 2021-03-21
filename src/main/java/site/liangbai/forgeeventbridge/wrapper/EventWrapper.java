@@ -27,9 +27,7 @@ import site.liangbai.forgeeventbridge.util.Reflection;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public final class EventWrapper<T extends EventWrapper.EventObject> extends ObjectWrapper {
     public EventWrapper(Event event) {
@@ -53,21 +51,31 @@ public final class EventWrapper<T extends EventWrapper.EventObject> extends Obje
     }
 
     private static class EventObjectProxyGenerator<T extends EventObject> implements MethodInterceptor {
-        private static final List<Class<?>> ignoredClasses = new LinkedList<>();
+        private static final Map<Class<?>, Class<?>> classMap = new HashMap<>();
 
         static {
-            registerIgnoredClassType(Boolean.class);
-            registerIgnoredClassType(Character.class);
-            registerIgnoredClassType(Integer.class);
-            registerIgnoredClassType(Long.class);
-            registerIgnoredClassType(Short.class);
-            registerIgnoredClassType(Float.class);
-            registerIgnoredClassType(Double.class);
-            registerIgnoredClassType(Byte.class);
+            registerMapClassType(boolean.class, Boolean.class);
+            registerMapClassType(char.class, Character.class);
+            registerMapClassType(int.class, Integer.class);
+            registerMapClassType(long.class, Long.class);
+            registerMapClassType(short.class, Short.class);
+            registerMapClassType(float.class, Float.class);
+            registerMapClassType(double.class, Double.class);
+            registerMapClassType(byte.class, Byte.class);
         }
 
-        public static void registerIgnoredClassType(Class<?> clazz) {
-            ignoredClasses.add(clazz);
+
+
+        public static void registerMapClassType(Class<?> clazz, Class<?> changeTo) {
+            classMap.put(clazz, changeTo);
+        }
+
+        public static Class<?> mapClass(Class<?> clazz) {
+            if (classMap.containsKey(clazz)) {
+                return classMap.get(clazz);
+            }
+
+            return clazz;
         }
 
         private final Object event;
@@ -87,7 +95,7 @@ public final class EventWrapper<T extends EventWrapper.EventObject> extends Obje
 
         @Override
         public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
-            for (Method eventMethod : event.getClass().getDeclaredMethods()) {
+            for (Method eventMethod : event.getClass().getMethods()) {
                 boolean isAbstract = Modifier.isAbstract(method.getModifiers());
 
                 if (!isAbstract) {
@@ -106,14 +114,13 @@ public final class EventWrapper<T extends EventWrapper.EventObject> extends Obje
 
                 Object returnValue = Reflection.setAccessible(eventMethod).invoke(event, args);
 
-                Class<?> returnType = method.getReturnType();
+                Class<?> returnType = mapClass(method.getReturnType());
 
                 if (!returnType.isInstance(returnValue)) {
                     returnValue = WrapperTransformer.require(returnType, returnValue);
                 }
 
-                if (!returnType.isInstance(returnValue)
-                        && !ignoredClasses.contains(returnValue.getClass()) && !Object.class.equals(returnType)) {
+                if (!returnType.isInstance(returnValue)) {
                     throw new UnknownTransformerTypeError("can not transfer the type: " + returnValue.getClass().getSimpleName() + " to " + returnType.getSimpleName());
                 }
 
