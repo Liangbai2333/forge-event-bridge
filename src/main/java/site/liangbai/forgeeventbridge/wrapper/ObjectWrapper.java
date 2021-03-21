@@ -33,14 +33,9 @@ public class ObjectWrapper implements IWrapper {
 
     @Override
     public <T> T as(String fieldName, Class<T> cast) {
-        Field field;
-        try {
-            field = object.getClass().getDeclaredField(fieldName);
+        Field field = Reflection.findFieldOrNull(getObject().getClass(), fieldName);
 
-            return cast.cast(Reflection.setAccessible(field).get(object));
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            return null;
-        }
+        return Reflection.getFieldObjOrNull(field, getObject(), cast);
     }
 
     @Override

@@ -23,21 +23,21 @@ import org.bukkit.Bukkit;
 public final class NMSVersion {
     public static String VERSION;
 
-    static {
-        Class<?> bukkitClass = Reflection.findClassOrNull("org.bukkit.Bukkit");
+    public static void initVersion() {
+        if (VERSION == null) {
+            Class<?> bukkitClass = Reflection.findClassOrNull("org.bukkit.Bukkit");
 
-        if (bukkitClass == null) {
-            VERSION = "unknown";
-        } else {
-            VERSION = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+            if (bukkitClass == null) {
+                VERSION = "unknown";
+            } else {
+                VERSION = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+            }
         }
     }
 
     public static Class<?> getCraftBukkitClassOrNull(String className) {
-        return Reflection.findClassOrNull("org.bukkit.craftbukkit." + VERSION + "." + className);
-    }
+        initVersion();
 
-    public static Class<?> getNMSClassOrNull(String className) {
-        return Reflection.findClassOrNull("net.minecraft.server." + VERSION + "." + className);
+        return Reflection.findClassOrNull("org.bukkit.craftbukkit." + VERSION + "." + className);
     }
 }

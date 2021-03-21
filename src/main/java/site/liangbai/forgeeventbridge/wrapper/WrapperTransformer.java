@@ -21,7 +21,6 @@ package site.liangbai.forgeeventbridge.wrapper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import site.liangbai.forgeeventbridge.util.NMSVersion;
@@ -75,15 +74,11 @@ public final class WrapperTransformer {
         });
 
         wrapperTransformer.put(Type.WORLD, obj -> {
-            if (obj instanceof World) {
-                Class<?> nmsWorld = NMSVersion.getNMSClassOrNull("World");
+            Method method = Reflection.findMethodOrNull(obj.getClass(), "getWorld");
 
-                Method method = Reflection.findMethodOrNull(nmsWorld, "getWorld");
+            Object worldObj = Reflection.invokeMethodOrNull(method, obj);
 
-                return Reflection.invokeMethodOrNull(method, obj);
-            }
-
-            return obj;
+            return worldObj == null ? obj : worldObj;
         });
     }
 
