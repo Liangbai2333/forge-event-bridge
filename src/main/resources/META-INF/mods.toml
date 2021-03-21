@@ -1,6 +1,6 @@
 issueTrackerURL = "https://github.com/Liangbai2333/forge-event-bridge/issues"
 license = "GPL v3.0"
-loaderVersion = "[27,)"
+loaderVersion = "[31,)"
 modLoader = "javafml"
 
 [[mods]]
@@ -18,4 +18,4 @@ mandatory = true
 modId = "forge"
 ordering = "NONE"
 side = "SERVER"
-versionRange = "[35.1.7,)"
+versionRange = "[31,)"
