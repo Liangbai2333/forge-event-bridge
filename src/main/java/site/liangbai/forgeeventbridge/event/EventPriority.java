@@ -24,7 +24,7 @@ package site.liangbai.forgeeventbridge.event;
  *
  * {@link #NORMAL} is the default level for a listener registered without a priority.
  *
- * @see ForgeEventHandler#priority()
+ * @see EventBridge#getPriority()
  */
 public enum EventPriority {
     /**
@@ -38,5 +38,9 @@ public enum EventPriority {
     HIGH,
     NORMAL,
     LOW,
-    LOWEST //Last to execute
+    LOWEST; //Last to execute
+
+    public String getNameWithForgeEventPriority() {
+        return name();
+    }
 }

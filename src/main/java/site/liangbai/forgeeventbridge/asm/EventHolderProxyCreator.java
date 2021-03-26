@@ -22,14 +22,14 @@ import site.liangbai.forgeeventbridge.asm.classcreator.IClassCreator;
 import site.liangbai.forgeeventbridge.asm.classcreator.impl.ASMClassCreator;
 import site.liangbai.forgeeventbridge.asm.constantsprovider.IConstantsProvider;
 import site.liangbai.forgeeventbridge.asm.constantsprovider.impl.ConstantsProvider;
-import site.liangbai.forgeeventbridge.event.EventHolder;
+import site.liangbai.forgeeventbridge.event.EventBridge;
 import site.liangbai.forgeeventbridge.util.Reflection;
 
 public final class EventHolderProxyCreator {
     public static final IClassCreator CLASS_CREATOR = new ASMClassCreator();
 
-    public static Class<?> createNewEventHolderProxyClass(EventHolder<?> eventHolder) {
-        String className = "EventListener$ForgeEventBridge$" + eventHolder.hashCode();
+    public static Class<?> createNewEventHolderProxyClass(EventBridge eventBridge) {
+        String className = "EventListener$ForgeEventBridge$" + eventBridge.hashCode();
 
         Class<?> loadedClass = Reflection.findClassOrNull(className);
 
@@ -37,7 +37,7 @@ public final class EventHolderProxyCreator {
             return loadedClass;
         }
 
-        Generator generator = new Generator(eventHolder);
+        Generator generator = new Generator(eventBridge);
 
         byte[] classBuffer = generator.generate(className);
 
@@ -47,15 +47,15 @@ public final class EventHolderProxyCreator {
     private static class Generator {
         private static final IConstantsProvider CONSTANTS_PROVIDER = new ConstantsProvider();
 
-        private final EventHolder<?> eventHolder;
+        private final EventBridge eventBridge;
 
-        public Generator(EventHolder<?> eventHolder) {
-            this.eventHolder = eventHolder;
+        public Generator(EventBridge eventBridge) {
+            this.eventBridge = eventBridge;
         }
 
         public byte[] generate(String className) {
             EventHolderProxyWriter eventHolderProxyWriter =
-                    new EventHolderProxyWriter(eventHolder, CONSTANTS_PROVIDER, className);
+                    new EventHolderProxyWriter(eventBridge, CONSTANTS_PROVIDER, className);
 
             eventHolderProxyWriter.writeEventHolderObjectField();
 

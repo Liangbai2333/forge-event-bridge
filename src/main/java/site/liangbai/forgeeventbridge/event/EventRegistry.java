@@ -21,7 +21,6 @@ package site.liangbai.forgeeventbridge.event;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import site.liangbai.forgeeventbridge.asm.EventHolderProxyCreator;
-import site.liangbai.forgeeventbridge.asm.UnknownEventHolderError;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -31,21 +30,15 @@ import java.util.Map;
 public final class EventRegistry {
     private static final Map<EventHolder<?>, Object> eventHolderToListenObj = new HashMap<>();
 
-    public static void register(EventHolder<?> eventHolder) {
-        ForgeEventHandler forgeEventHandler = eventHolder.getClass().getAnnotation(ForgeEventHandler.class);
-
-        if (forgeEventHandler == null) {
-            throw new UnknownEventHolderError("could not find annotation: ForgeEventHandler in class: " + eventHolder.getClass().getSimpleName());
-        }
-
-        Class<?> eventProxyClass = EventHolderProxyCreator.createNewEventHolderProxyClass(eventHolder);
+    public static void register(EventHolder<?> eventHolder, EventBridge eventBridge) {
+        Class<?> eventProxyClass = EventHolderProxyCreator.createNewEventHolderProxyClass(eventBridge);
 
         try {
             Constructor<?> constructor = eventProxyClass.getDeclaredConstructor(EventHolder.class);
 
             Object listenObj = constructor.newInstance(eventHolder);
 
-            switch (forgeEventHandler.bus()) {
+            switch (eventBridge.getBus()) {
                 case FORGE:
                     MinecraftForge.EVENT_BUS.register(listenObj);
                     break;

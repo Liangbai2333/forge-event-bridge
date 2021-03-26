@@ -21,29 +21,23 @@ package site.liangbai.forgeeventbridge.asm;
 import org.objectweb.asm.*;
 import site.liangbai.forgeeventbridge.asm.constantsprovider.Constant;
 import site.liangbai.forgeeventbridge.asm.constantsprovider.IConstantsProvider;
-import site.liangbai.forgeeventbridge.event.EventHolder;
-import site.liangbai.forgeeventbridge.event.ForgeEventHandler;
+import site.liangbai.forgeeventbridge.event.EventBridge;
 
 public class EventHolderProxyWriter extends ClassWriter implements Opcodes {
     private final IConstantsProvider constantsProvider;
 
     private final String className;
 
-    private final ForgeEventHandler forgeEventHandler;
+    private final EventBridge eventBridge;
 
     public EventHolderProxyWriter(
-            EventHolder<?> eventHolder,
+            EventBridge eventBridge,
             IConstantsProvider constantsProvider,
             String className
     ) {
         super(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
 
-        forgeEventHandler = eventHolder.getClass().getAnnotation(ForgeEventHandler.class);
-
-        if (forgeEventHandler == null) {
-            throw new UnknownEventHolderError("could not find annotation: ForgeEventHandler in class: " + eventHolder.getClass().getSimpleName());
-        }
-
+        this.eventBridge = eventBridge;
         this.className = className;
         this.constantsProvider = constantsProvider;
 
@@ -69,9 +63,7 @@ public class EventHolderProxyWriter extends ClassWriter implements Opcodes {
     }
 
     public void writeListenEventMethod(String methodName) {
-        ForgeEventHandler.Target target = forgeEventHandler.value();
-
-        String targetClassName = getTargetClassName(target);
+        final String targetClassName = eventBridge.getSourceASMClassName();
 
         MethodVisitor mv = visitMethod(ACC_PUBLIC, methodName, "(" + targetClassName + ")V", null, null);
 
@@ -98,14 +90,8 @@ public class EventHolderProxyWriter extends ClassWriter implements Opcodes {
 
     private void writeListenAnnotationForMethod(MethodVisitor mv) {
         AnnotationVisitor av = mv.visitAnnotation(constantsProvider.get(Constant.SUBSCRIBE_EVENT_CLASS_NAME), true);
-        av.visitEnum("priority", constantsProvider.get(Constant.EVENT_PRIORITY_CLASS_NAME), forgeEventHandler.priority().name());
-        av.visit("receiveCanceled", forgeEventHandler.receiveCanceled());
+        av.visitEnum("priority", constantsProvider.get(Constant.EVENT_PRIORITY_CLASS_NAME), eventBridge.getPriority().getNameWithForgeEventPriority());
+        av.visit("receiveCanceled", eventBridge.isReceiveCanceled());
         av.visitEnd();
-    }
-
-    private static String getTargetClassName(ForgeEventHandler.Target target) {
-        String name = target.value().equals(ForgeEventHandler.None.class) ? target.source() : target.value().getName();
-
-        return "L" + name.replace(".", "/") + ";";
     }
 }
