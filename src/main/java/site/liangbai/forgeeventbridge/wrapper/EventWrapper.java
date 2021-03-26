@@ -98,7 +98,7 @@ public final class EventWrapper<T extends EventWrapper.EventObject> extends Obje
 
                 Class<?> returnType = mapClass(method.getReturnType());
 
-                if (!returnType.isInstance(returnValue)) {
+                if (!returnType.isInstance(returnValue) && returnValue != null) {
                     returnValue = WrapperTransformer.require(returnType, returnValue);
 
                     if (!returnType.isInstance(returnValue)) {
