@@ -105,6 +105,10 @@ public final class EventBridge {
 
             return  this;
         }
+
+        public EventBridge build() {
+            return new EventBridge(source, priority, bus, receiveCanceled);
+        }
     }
 
     public enum Bus {
