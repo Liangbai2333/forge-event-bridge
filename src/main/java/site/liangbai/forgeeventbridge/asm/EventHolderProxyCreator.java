@@ -61,7 +61,7 @@ public final class EventHolderProxyCreator {
 
             eventHolderProxyWriter.writeConstructor();
 
-            eventHolderProxyWriter.writeListenEventMethod("event");
+            eventHolderProxyWriter.writeListenEventMethod("receive");
 
             eventHolderProxyWriter.visitEnd();
 
