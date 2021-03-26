@@ -51,28 +51,24 @@ public final class EventWrapper<T extends EventWrapper.EventObject> extends Obje
     }
 
     private static class EventObjectProxyGenerator<T extends EventObject> implements MethodInterceptor {
-        private static final Map<Class<?>, Class<?>> classMap = new HashMap<>();
-
-        static {
-            registerMapClassType(boolean.class, Boolean.class);
-            registerMapClassType(char.class, Character.class);
-            registerMapClassType(int.class, Integer.class);
-            registerMapClassType(long.class, Long.class);
-            registerMapClassType(short.class, Short.class);
-            registerMapClassType(float.class, Float.class);
-            registerMapClassType(double.class, Double.class);
-            registerMapClassType(byte.class, Byte.class);
-        }
-
-
-
-        public static void registerMapClassType(Class<?> clazz, Class<?> changeTo) {
-            classMap.put(clazz, changeTo);
-        }
 
         public static Class<?> mapClass(Class<?> clazz) {
-            if (classMap.containsKey(clazz)) {
-                return classMap.get(clazz);
+            if (clazz.equals(int.class)) {
+                return Integer.class;
+            } else if (clazz.equals(boolean.class)) {
+                return Boolean.class;
+            } else if (clazz.equals(long.class)) {
+                return Long.class;
+            } else if (clazz.equals(double.class)) {
+                return Double.class;
+            } else if (clazz.equals(float.class)) {
+                return Float.class;
+            } else if (clazz.equals(byte.class)) {
+                return Byte.class;
+            } else if (clazz.equals(char.class)) {
+                return Character.class;
+            } else if (clazz.equals(short.class)) {
+                return Short.class;
             }
 
             return clazz;
@@ -95,33 +91,19 @@ public final class EventWrapper<T extends EventWrapper.EventObject> extends Obje
 
         @Override
         public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
-            for (Method eventMethod : event.getClass().getMethods()) {
-                boolean isAbstract = Modifier.isAbstract(method.getModifiers());
+            if (Modifier.isAbstract(method.getModifiers())) {
+                Method eventMethod = event.getClass().getMethod(method.getName(), method.getParameterTypes());
 
-                if (!isAbstract) {
-                    continue;
-                }
-
-                String methodName = method.getName();
-
-                if (!eventMethod.getName().equals(methodName)) {
-                    continue;
-                }
-
-                if (!isSameArray(method.getParameterTypes(), eventMethod.getParameterTypes())) {
-                    continue;
-                }
-
-                Object returnValue = Reflection.setAccessible(eventMethod).invoke(event, args);
+                Object returnValue = Reflection.invokeMethodOrNull(Reflection.setAccessible(eventMethod), event, args);
 
                 Class<?> returnType = mapClass(method.getReturnType());
 
                 if (!returnType.isInstance(returnValue)) {
                     returnValue = WrapperTransformer.require(returnType, returnValue);
-                }
 
-                if (!returnType.isInstance(returnValue)) {
-                    throw new UnknownTransformerTypeError("can not transfer the type: " + returnValue.getClass().getSimpleName() + " to " + returnType.getSimpleName());
+                    if (!returnType.isInstance(returnValue)) {
+                        throw new UnknownTransformerTypeError("can not transfer the type: " + returnValue.getClass().getSimpleName() + " to " + returnType.getSimpleName());
+                    }
                 }
 
                 return returnValue;
@@ -129,25 +111,5 @@ public final class EventWrapper<T extends EventWrapper.EventObject> extends Obje
 
             return proxy.invokeSuper(obj, args);
         }
-    }
-
-    private static <T> boolean isSameArray(T[] arrayFirst, T[] arraySecond) {
-        if (arrayFirst == null || arraySecond == null) {
-            return false;
-        }
-
-        if (arraySecond.length != arrayFirst.length) {
-            return false;
-        }
-
-        for (int i = 0; i < arrayFirst.length; i++) {
-            T obj = arrayFirst[i];
-
-            if (!obj.equals(arraySecond[i])) {
-                return false;
-            }
-        }
-
-        return true;
     }
 }

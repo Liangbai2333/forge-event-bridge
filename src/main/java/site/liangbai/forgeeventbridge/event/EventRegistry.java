@@ -20,17 +20,22 @@ package site.liangbai.forgeeventbridge.event;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.jetbrains.annotations.NotNull;
 import site.liangbai.forgeeventbridge.asm.EventHolderProxyCreator;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public final class EventRegistry {
     private static final Map<EventHolder<?>, Object> eventHolderToListenObj = new HashMap<>();
 
-    public static void register(EventHolder<?> eventHolder, EventBridge eventBridge) {
+    public static void register(@NotNull EventHolder<?> eventHolder, @NotNull EventBridge eventBridge) {
+        Objects.requireNonNull(eventBridge);
+        Objects.requireNonNull(eventHolder);
+
         Class<?> eventProxyClass = EventHolderProxyCreator.createNewEventHolderProxyClass(eventBridge);
 
         try {
@@ -53,10 +58,14 @@ public final class EventRegistry {
         }
     }
 
-    public static void unregister(EventHolder<?> eventHolder) {
-        if (!eventHolderToListenObj.containsKey(eventHolder)) return;
+    public static void unregister(@NotNull EventHolder<?> eventHolder) {
+        Objects.requireNonNull(eventHolder);
 
         Object listenObj = eventHolderToListenObj.get(eventHolder);
+
+        if (listenObj == null) {
+            return;
+        }
 
         MinecraftForge.EVENT_BUS.unregister(listenObj);
 

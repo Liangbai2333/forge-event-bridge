@@ -18,12 +18,13 @@
 
 package site.liangbai.forgeeventbridge.event;
 
+import org.jetbrains.annotations.NotNull;
 import site.liangbai.forgeeventbridge.wrapper.EventWrapper;
 
 public interface EventHolder<T extends EventWrapper.EventObject> {
     void handle(EventWrapper<T> eventWrapper);
 
-    default void register(EventBridge eventBridge) {
+    default void register(@NotNull EventBridge eventBridge) {
         EventRegistry.register(this, eventBridge);
     }
 
