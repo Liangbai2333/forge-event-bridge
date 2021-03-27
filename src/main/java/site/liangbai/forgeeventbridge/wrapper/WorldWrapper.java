@@ -18,14 +18,14 @@
 
 package site.liangbai.forgeeventbridge.wrapper;
 
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.World;
 
 public final class WorldWrapper extends ObjectWrapper {
     public WorldWrapper(Object object) {
         super(object);
     }
 
-    public ItemStack asItemStack() {
-        return (ItemStack) WrapperTransformer.require(ItemStack.class, getObject());
+    public World asWorld() {
+        return (World) WrapperTransformer.require(World.class, getObject());
     }
 }

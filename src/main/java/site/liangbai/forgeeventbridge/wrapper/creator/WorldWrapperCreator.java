@@ -18,14 +18,11 @@
 
 package site.liangbai.forgeeventbridge.wrapper.creator;
 
-import net.minecraft.world.World;
 import site.liangbai.forgeeventbridge.wrapper.WorldWrapper;
 
 public final class WorldWrapperCreator implements IWrapperCreator<WorldWrapper> {
     @Override
     public WorldWrapper create(Object object) {
-        if (!(object instanceof World)) return null;
-
         return new WorldWrapper(object);
     }
 }

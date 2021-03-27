@@ -18,14 +18,11 @@
 
 package site.liangbai.forgeeventbridge.wrapper.creator;
 
-import net.minecraft.item.ItemStack;
 import site.liangbai.forgeeventbridge.wrapper.ItemStackWrapper;
 
 public final class ItemStackWrapperCreator implements IWrapperCreator<ItemStackWrapper> {
     @Override
     public ItemStackWrapper create(Object object) {
-        if (!(object instanceof ItemStack)) return null;
-
         return new ItemStackWrapper(object);
     }
 }

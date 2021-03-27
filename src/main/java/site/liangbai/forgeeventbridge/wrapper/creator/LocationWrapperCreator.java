@@ -18,5 +18,11 @@
 
 package site.liangbai.forgeeventbridge.wrapper.creator;
 
-public class LocationWrapperCreator {
+import site.liangbai.forgeeventbridge.wrapper.LocationWrapper;
+
+public class LocationWrapperCreator implements IWrapperCreator<LocationWrapper> {
+    @Override
+    public LocationWrapper create(Object object) {
+        return new LocationWrapper(object);
+    }
 }

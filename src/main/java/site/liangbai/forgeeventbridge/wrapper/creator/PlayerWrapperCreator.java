@@ -18,14 +18,11 @@
 
 package site.liangbai.forgeeventbridge.wrapper.creator;
 
-import net.minecraft.entity.player.PlayerEntity;
 import site.liangbai.forgeeventbridge.wrapper.PlayerWrapper;
 
 public final class PlayerWrapperCreator implements IWrapperCreator<PlayerWrapper> {
     @Override
     public PlayerWrapper create(Object object) {
-        if (!(object instanceof PlayerEntity)) return null;
-
         return new PlayerWrapper(object);
     }
 }
