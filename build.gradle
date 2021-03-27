@@ -116,8 +116,10 @@ jar {
     }
 
     from {
-		configurations.shaded.collect { it.isDirectory() ? it : zipTree(it) }
-	}
+		configurations.shaded.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
 }
 
 license {
