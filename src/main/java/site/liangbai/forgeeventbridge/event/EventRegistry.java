@@ -22,9 +22,9 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.jetbrains.annotations.NotNull;
 import site.liangbai.forgeeventbridge.asm.EventHolderProxyCreator;
+import site.liangbai.forgeeventbridge.util.Reflection;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -32,33 +32,29 @@ import java.util.Objects;
 public final class EventRegistry {
     private static final Map<EventHolder<?>, Object> eventHolderToListenObj = new HashMap<>();
 
-    public static void register(@NotNull EventHolder<?> eventHolder, @NotNull EventBridge eventBridge) {
+    public static synchronized void register(@NotNull EventHolder<?> eventHolder, @NotNull EventBridge eventBridge) {
         Objects.requireNonNull(eventBridge);
         Objects.requireNonNull(eventHolder);
 
         Class<?> eventProxyClass = EventHolderProxyCreator.createNewEventHolderProxyClass(eventBridge);
 
-        try {
-            Constructor<?> constructor = eventProxyClass.getDeclaredConstructor(EventHolder.class);
+        Constructor<?> eventProxyConstructor = Reflection.findConstructor(eventProxyClass, EventHolder.class);
 
-            Object listenObj = constructor.newInstance(eventHolder);
+        Object eventProxy = Reflection.newInstance(eventProxyConstructor, eventHolder);
 
-            switch (eventBridge.getBus()) {
-                case FORGE:
-                    MinecraftForge.EVENT_BUS.register(listenObj);
-                    break;
-                case MOD:
-                    FMLJavaModLoadingContext.get().getModEventBus().register(listenObj);
-                    break;
-            }
-
-            eventHolderToListenObj.put(eventHolder, listenObj);
-        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            e.printStackTrace();
+        switch (eventBridge.getBus()) {
+            case FORGE:
+                MinecraftForge.EVENT_BUS.register(eventProxy);
+                break;
+            case MOD:
+                FMLJavaModLoadingContext.get().getModEventBus().register(eventProxy);
+                break;
         }
+
+        eventHolderToListenObj.put(eventHolder, eventProxy);
     }
 
-    public static void unregister(@NotNull EventHolder<?> eventHolder) {
+    public static synchronized void unregister(@NotNull EventHolder<?> eventHolder) {
         Objects.requireNonNull(eventHolder);
 
         Object listenObj = eventHolderToListenObj.get(eventHolder);

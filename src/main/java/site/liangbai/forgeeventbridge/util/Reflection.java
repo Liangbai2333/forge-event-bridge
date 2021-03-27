@@ -18,10 +18,7 @@
 
 package site.liangbai.forgeeventbridge.util;
 
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 
 public final class Reflection {
     public static Class<?> findClassOrNull(String name) {
@@ -111,6 +108,40 @@ public final class Reflection {
 
         try {
             method = cls.getMethod(name, params);
+
+            return Reflection.setAccessible(method);
+        } catch (NoSuchMethodException e) {
+            return null;
+        }
+    }
+
+    public static <T> T newInstance(Constructor<T> constructor, Object... args) {
+        if (constructor == null) {
+            return null;
+        }
+
+        try {
+            return constructor.newInstance(args);
+        } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
+            return null;
+        }
+    }
+
+    public static <T> Constructor<T> findConstructor(Class<T> cls, Class<?>... params) {
+        try {
+            Constructor<T> constructor = cls.getConstructor(params);
+
+            return Reflection.setAccessible(constructor);
+        } catch (NoSuchMethodException e) {
+            return null;
+        }
+    }
+
+    public static Method findDeclaredMethodOrNull(Class<?> cls, String name, Class<?>... params) {
+        Method method;
+
+        try {
+            method = cls.getDeclaredMethod(name, params);
 
             return Reflection.setAccessible(method);
         } catch (NoSuchMethodException e) {

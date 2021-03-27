@@ -21,7 +21,7 @@ package site.liangbai.forgeeventbridge.asm;
 import site.liangbai.forgeeventbridge.asm.classcreator.IClassCreator;
 import site.liangbai.forgeeventbridge.asm.classcreator.impl.ASMClassCreator;
 import site.liangbai.forgeeventbridge.asm.constantsprovider.IConstantsProvider;
-import site.liangbai.forgeeventbridge.asm.constantsprovider.impl.ConstantsProvider;
+import site.liangbai.forgeeventbridge.asm.constantsprovider.impl.ConstantsProviderImpl;
 import site.liangbai.forgeeventbridge.event.EventBridge;
 import site.liangbai.forgeeventbridge.util.Reflection;
 
@@ -45,7 +45,7 @@ public final class EventHolderProxyCreator {
     }
 
     private static class Generator {
-        private static final IConstantsProvider CONSTANTS_PROVIDER = new ConstantsProvider();
+        private static final IConstantsProvider CONSTANTS_PROVIDER = new ConstantsProviderImpl();
 
         private final EventBridge eventBridge;
 

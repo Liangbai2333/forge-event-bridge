@@ -19,13 +19,13 @@
 package site.liangbai.forgeeventbridge.asm.classcreator.impl;
 
 import cpw.mods.modlauncher.TransformingClassLoader;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.ASMEventHandler;
 import org.jetbrains.annotations.Nullable;
 import site.liangbai.forgeeventbridge.asm.classcreator.IClassCreator;
 import site.liangbai.forgeeventbridge.util.Reflection;
 
 import java.lang.reflect.Method;
-import java.security.ProtectionDomain;
 
 public final class ASMClassCreator implements IClassCreator {
     @Override
@@ -37,18 +37,14 @@ public final class ASMClassCreator implements IClassCreator {
             return transformingClassLoader.getClass(name, classBuffer);
         }
 
-        ClassLoader classLoader = ASMClassCreator.class.getClassLoader();
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
 
-        Method defineMethod =
-                Reflection.findMethodOrNull(
-                        ClassLoader.class, "defineClass",
-                        String.class, byte[].class, int.class, int.class, ProtectionDomain.class
-                );
+        Method defineMethod = Reflection.findDeclaredMethodOrNull(ClassLoader.class, "defineClass", String.class, byte[].class, int.class, int.class);
 
         Class<?> clazz = Reflection.invokeMethodOrNull(
                 defineMethod, classLoader,
                 Class.class,
-                name, classBuffer, 0, classBuffer.length, null
+                name, classBuffer, 0, classBuffer.length
         );
 
         if (clazz == null || Reflection.findClassOrNull(name) == null) {
@@ -67,6 +63,12 @@ public final class ASMClassCreator implements IClassCreator {
         }
 
         classLoader = ASMEventHandler.class.getClassLoader();
+
+        if (classLoader instanceof TransformingClassLoader) {
+            return (TransformingClassLoader) classLoader;
+        }
+
+        classLoader = MinecraftForge.class.getClassLoader();
 
         if (classLoader instanceof TransformingClassLoader) {
             return (TransformingClassLoader) classLoader;

@@ -23,7 +23,7 @@ import site.liangbai.forgeeventbridge.asm.constantsprovider.IConstantsProvider;
 
 import java.util.HashMap;
 
-public final class ConstantsProvider implements IConstantsProvider {
+public final class ConstantsProviderImpl implements IConstantsProvider {
     private static final HashMap<Constant, String> constantStringEnumMap = new HashMap<>();
 
     static {
