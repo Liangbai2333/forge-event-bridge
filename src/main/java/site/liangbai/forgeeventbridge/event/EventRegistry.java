@@ -26,44 +26,48 @@ import site.liangbai.forgeeventbridge.asm.EventHolderProxyCreator;
 import site.liangbai.forgeeventbridge.util.Reflection;
 
 import java.lang.reflect.Constructor;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 public final class EventRegistry {
-    private static final Map<EventHolder<?>, Object> eventHolderToListenObj = new ConcurrentHashMap<>();
+    private static final Map<EventHolder<?>, RegistryInfo> eventHolderRegistryInfoMap = new HashMap<>();
 
-    public static synchronized void register(@NotNull EventHolder<?> eventHolder) {
+    public static synchronized void register(@NotNull EventHolder<?> eventHolder, EventBridge eventBridge) {
         Objects.requireNonNull(eventHolder);
 
-        Class<?> eventProxyClass = EventHolderProxyCreator.createNewEventHolderProxyClass(eventHolder.getEventBridge());
+        if (eventHolderRegistryInfoMap.containsKey(eventHolder)) {
+            return;
+        }
+
+        Class<?> eventProxyClass = EventHolderProxyCreator.createNewEventHolderProxyClass(eventBridge);
 
         Constructor<?> eventProxyConstructor = Reflection.findConstructor(eventProxyClass, EventHolder.class);
 
         Object eventProxy = Reflection.newInstance(eventProxyConstructor, eventHolder);
 
-        EventBridge eventBridge = eventHolder.getEventBridge();
-
         runWithEventBus(eventBridge.getBus(), eventBus -> eventBus.register(eventProxy));
 
-        eventHolderToListenObj.put(eventHolder, eventProxy);
+        eventHolderRegistryInfoMap.put(eventHolder, new RegistryInfo(eventBridge, eventHolder));
     }
 
     public static synchronized void unregister(@NotNull EventHolder<?> eventHolder) {
         Objects.requireNonNull(eventHolder);
 
-        Object eventProxy = eventHolderToListenObj.get(eventHolder);
+        RegistryInfo registryInfo = eventHolderRegistryInfoMap.get(eventHolder);
 
-        if (eventProxy == null) {
+        if (registryInfo == null) {
             return;
         }
 
-        EventBridge eventBridge = eventHolder.getEventBridge();
+        EventBridge eventBridge = registryInfo.getEventBridge();
+
+        Object eventProxy = registryInfo.getEventProxy();
 
         runWithEventBus(eventBridge.getBus(), eventBus -> eventBus.unregister(eventProxy));
 
-        eventHolderToListenObj.remove(eventHolder);
+        eventHolderRegistryInfoMap.remove(eventHolder);
     }
 
     public static void runWithEventBus(EventBridge.Bus bus, Consumer<IEventBus> consumer) {
@@ -78,6 +82,24 @@ public final class EventRegistry {
             case MOD:
                 modConsumer.accept(FMLJavaModLoadingContext.get().getModEventBus());
                 break;
+        }
+    }
+
+    private static class RegistryInfo {
+        private final EventBridge eventBridge;
+        private final Object eventProxy;
+
+        public RegistryInfo(EventBridge eventBridge, Object eventProxy) {
+            this.eventBridge = eventBridge;
+            this.eventProxy = eventProxy;
+        }
+
+        public EventBridge getEventBridge() {
+            return eventBridge;
+        }
+
+        public Object getEventProxy() {
+            return eventProxy;
         }
     }
 }

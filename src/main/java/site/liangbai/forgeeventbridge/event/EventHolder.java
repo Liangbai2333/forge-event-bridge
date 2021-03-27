@@ -24,10 +24,8 @@ import site.liangbai.forgeeventbridge.wrapper.EventWrapper;
 public interface EventHolder<T extends EventWrapper.EventObject> {
     void handle(EventWrapper<T> eventWrapper);
 
-    @NotNull EventBridge getEventBridge();
-
-    default void register() {
-        EventRegistry.register(this);
+    default void register(@NotNull EventBridge eventBridge) {
+        EventRegistry.register(this, eventBridge);
     }
 
     default void unregister() {
