@@ -23,7 +23,7 @@ import site.liangbai.forgeeventbridge.asm.constantsprovider.Constant;
 import site.liangbai.forgeeventbridge.asm.constantsprovider.IConstantsProvider;
 import site.liangbai.forgeeventbridge.event.EventBridge;
 
-public class EventHolderProxyWriter extends ClassWriter implements Opcodes {
+public final class EventHolderProxyWriter extends ClassWriter implements Opcodes {
     private final IConstantsProvider constantsProvider;
 
     private final String className;
@@ -40,8 +40,6 @@ public class EventHolderProxyWriter extends ClassWriter implements Opcodes {
         this.eventBridge = eventBridge;
         this.className = className;
         this.constantsProvider = constantsProvider;
-
-        visit(52, ACC_PUBLIC + ACC_SUPER, className, null, "java/lang/Object", null);
     }
 
     public void writeEventHolderObjectField() {

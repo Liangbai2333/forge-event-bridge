@@ -22,30 +22,26 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import site.liangbai.forgeeventbridge.util.NMSVersion;
 import site.liangbai.forgeeventbridge.util.Reflection;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 public final class WrapperTransformer {
-    private static final Map<Type, Function<Object, Object>> wrapperTransformer = new HashMap<>();
+    private static final Map<Type, Function<Object, Object>> WRAPPER_TRANSFORMER = new HashMap<>();
 
     static {
-        wrapperTransformer.put(Type.ENTITY, obj -> {
-            if (obj instanceof net.minecraft.entity.Entity) {
-                Method method = Reflection.findMethodOrNull(net.minecraft.entity.Entity.class, "getBukkitEntity");
+        WRAPPER_TRANSFORMER.put(Type.ENTITY, obj ->
+                TransformerMethods.BUKKIT_ENTITY_GETTER.invokeOrDefault(obj, obj));
 
-                return Reflection.invokeMethodOrNull(method, obj);
-            }
-
-            return null;
-        });
-
-        wrapperTransformer.put(Type.LOCATION, obj -> {
+        WRAPPER_TRANSFORMER.put(Type.LOCATION, obj -> {
             if (obj instanceof BlockPos) {
                 BlockPos blockPos = ((BlockPos) obj);
 
@@ -61,55 +57,77 @@ public final class WrapperTransformer {
             return obj;
         });
 
-        wrapperTransformer.put(Type.ITEM_STACK, obj -> {
-            if (obj instanceof ItemStack) {
-                Class<?> craftItemStackClass = NMSVersion.getCraftBukkitClassOrNull("inventory.CraftItemStack");
+        WRAPPER_TRANSFORMER.put(Type.ITEM_STACK, obj ->
+                TransformerMethods.CRAFT_ITEM_STACK_AS_BUKKIT_COPY
+                .invokeOrDefault(null, obj, obj));
 
-                Method method = Reflection.findMethodOrNull(craftItemStackClass, "asBukkitCopy", ItemStack.class);
-
-                return Reflection.invokeMethodOrNull(method, null, obj);
-            }
-
-            return obj;
-        });
-
-        wrapperTransformer.put(Type.WORLD, obj -> {
-            Method method = Reflection.findMethodOrNull(obj.getClass(), "getWorld");
-
-            Object worldObj = Reflection.invokeMethodOrNull(method, obj);
-
-            return worldObj == null ? obj : worldObj;
-        });
+        WRAPPER_TRANSFORMER.put(Type.WORLD, obj ->
+                TransformerMethods.WORLD_GETTER.invokeOrDefault(obj, obj));
     }
 
     public static Object require(Class<?> requireType, Object otherObj) {
-        if (isAssignableFrom(Entity.class, requireType)) {
-            return wrapperTransformer.get(Type.ENTITY).apply(otherObj);
-        }
-
-        if (isAssignableFrom(Location.class, requireType)) {
-            return wrapperTransformer.get(Type.LOCATION).apply(otherObj);
-        }
-
-        if (isAssignableFrom(org.bukkit.inventory.ItemStack.class, requireType)) {
-            return wrapperTransformer.get(Type.ITEM_STACK).apply(otherObj);
-        }
-
-        if (isAssignableFrom(org.bukkit.World.class, requireType)) {
-            return wrapperTransformer.get(Type.WORLD).apply(otherObj);
-        }
-
-        return otherObj;
-    }
-
-    private static boolean isAssignableFrom(Class<?> first, Class<?> second) {
-        return first.equals(second) || first.isAssignableFrom(second);
+        return Type.matchType(requireType)
+                .orElse(Type.NONE)
+                .apply(otherObj);
     }
 
     private enum Type {
-        ENTITY,
-        WORLD,
-        ITEM_STACK,
-        LOCATION
+        ENTITY(Entity.class),
+        WORLD(World.class),
+        ITEM_STACK(org.bukkit.inventory.ItemStack.class),
+        LOCATION(Location.class),
+        NONE(None.class);
+        
+        private final Class<?> baseAcceptedClass;
+        
+        Type(Class<?> baseAcceptedClass) {
+            this.baseAcceptedClass = baseAcceptedClass;
+        }
+        
+        public boolean isAcceptedClass(Class<?> clazz) {
+            return baseAcceptedClass.isAssignableFrom(clazz);
+        }
+        
+        public Object apply(Object otherObj) {
+            return this == Type.NONE
+                    ? otherObj
+                    : WRAPPER_TRANSFORMER.getOrDefault(this, obj -> obj)
+                    .apply(otherObj);
+        }
+        
+        public static Optional<Type> matchType(Class<?> clazz) {
+            return Arrays.stream(values())
+                    .filter(type -> type.isAcceptedClass(clazz))
+                    .findFirst();
+        }
+    }
+
+    private static final class None { }
+
+    public enum TransformerMethods {
+        BUKKIT_ENTITY_GETTER
+                (Reflection.findMethodOrNull(net.minecraft.entity.Entity.class, "getBukkitEntity")),
+
+        CRAFT_ITEM_STACK_AS_BUKKIT_COPY
+                (Reflection.findMethodOrNull(
+                        NMSVersion.getCraftBukkitClassOrNull("inventory.CraftItemStack"),
+                        "asBukkitCopy",
+                        ItemStack.class)
+                ),
+
+        WORLD_GETTER
+                (Reflection.findMethodOrNull(net.minecraft.world.World.class, "getWorld"));
+
+        private final Method method;
+
+        TransformerMethods(Method method) {
+            this.method = method;
+        }
+
+        public Object invokeOrDefault(Object obj, Object defaultValue, Object... args) {
+            Object returnValue = Reflection.invokeMethodOrNull(method, obj, args);
+
+            return returnValue == null ? defaultValue : returnValue;
+        }
     }
 }

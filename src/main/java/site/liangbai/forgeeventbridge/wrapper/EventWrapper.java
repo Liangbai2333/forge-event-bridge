@@ -27,7 +27,6 @@ import site.liangbai.forgeeventbridge.util.Reflection;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.*;
 
 public final class EventWrapper<T extends EventWrapper.EventObject> extends ObjectWrapper {
     public EventWrapper(Event event) {
@@ -35,8 +34,6 @@ public final class EventWrapper<T extends EventWrapper.EventObject> extends Obje
     }
 
     public T as(@NotNull Class<T> eventObjectClass) {
-        Objects.requireNonNull(eventObjectClass);
-
         EventObjectProxyGenerator<T> generator = new EventObjectProxyGenerator<>(getObject());
 
         return generator.generate(eventObjectClass);

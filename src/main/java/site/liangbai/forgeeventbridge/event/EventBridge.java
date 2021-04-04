@@ -103,7 +103,7 @@ public final class EventBridge {
         public Builder receiveCanceled(boolean receiveCanceled) {
             this.receiveCanceled = receiveCanceled;
 
-            return  this;
+            return this;
         }
 
         public EventBridge build() {

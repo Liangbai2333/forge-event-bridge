@@ -55,19 +55,15 @@ public final class EventRegistry {
     public static synchronized void unregister(@NotNull EventHolder<?> eventHolder) {
         Objects.requireNonNull(eventHolder);
 
-        RegistryInfo registryInfo = eventHolderRegistryInfoMap.get(eventHolder);
+        eventHolderRegistryInfoMap.computeIfPresent(eventHolder, (key, registryInfo) -> {
+            EventBridge eventBridge = registryInfo.getEventBridge();
 
-        if (registryInfo == null) {
-            return;
-        }
+            Object eventProxy = registryInfo.getEventProxy();
 
-        EventBridge eventBridge = registryInfo.getEventBridge();
+            runWithEventBus(eventBridge.getBus(), eventBus -> eventBus.unregister(eventProxy));
 
-        Object eventProxy = registryInfo.getEventProxy();
-
-        runWithEventBus(eventBridge.getBus(), eventBus -> eventBus.unregister(eventProxy));
-
-        eventHolderRegistryInfoMap.remove(eventHolder);
+            return null;
+        });
     }
 
     public static void runWithEventBus(EventBridge.Bus bus, Consumer<IEventBus> consumer) {

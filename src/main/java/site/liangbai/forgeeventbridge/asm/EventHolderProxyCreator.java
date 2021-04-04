@@ -18,6 +18,7 @@
 
 package site.liangbai.forgeeventbridge.asm;
 
+import org.objectweb.asm.Opcodes;
 import site.liangbai.forgeeventbridge.asm.classcreator.IClassCreator;
 import site.liangbai.forgeeventbridge.asm.classcreator.impl.ASMClassCreator;
 import site.liangbai.forgeeventbridge.asm.constantsprovider.IConstantsProvider;
@@ -56,6 +57,8 @@ public final class EventHolderProxyCreator {
         public byte[] generate(String className) {
             EventHolderProxyWriter eventHolderProxyWriter =
                     new EventHolderProxyWriter(eventBridge, CONSTANTS_PROVIDER, className);
+
+            eventHolderProxyWriter.visit(52, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, className, null, "java/lang/Object", null);
 
             eventHolderProxyWriter.writeEventHolderObjectField();
 
