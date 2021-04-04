@@ -127,7 +127,7 @@ public final class Reflection {
         }
     }
 
-    public static <T> Constructor<T> findConstructor(Class<T> cls, Class<?>... params) {
+    public static <T> Constructor<T> findConstructorOrNull(Class<T> cls, Class<?>... params) {
         try {
             Constructor<T> constructor = cls.getConstructor(params);
 

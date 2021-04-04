@@ -97,13 +97,17 @@ public final class EventWrapper<T extends EventWrapper.EventObject> extends Obje
                     return null;
                 }
 
-                Class<?> returnType = mapClass(method.getReturnType());
+                Class<?> returnType = method.getReturnType();
 
                 if (!returnType.isInstance(returnValue)) {
-                    returnValue = WrapperTransformer.require(returnType, returnValue);
+                    returnType = mapClass(method.getReturnType());
 
                     if (!returnType.isInstance(returnValue)) {
-                        throw new UnknownTransformerTypeError("can not transfer the type: " + returnValue.getClass().getSimpleName() + " to " + returnType.getSimpleName());
+                        returnValue = WrapperTransformer.require(returnType, returnValue);
+
+                        if (!returnType.isInstance(returnValue)) {
+                            throw new UnknownTransformerTypeError("can not transfer the type: " + returnValue.getClass().getSimpleName() + " to " + returnType.getSimpleName());
+                        }
                     }
                 }
 

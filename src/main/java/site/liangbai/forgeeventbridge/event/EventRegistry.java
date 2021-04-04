@@ -37,19 +37,17 @@ public final class EventRegistry {
     public static synchronized void register(@NotNull EventHolder<?> eventHolder, EventBridge eventBridge) {
         Objects.requireNonNull(eventHolder);
 
-        if (eventHolderRegistryInfoMap.containsKey(eventHolder)) {
-            return;
-        }
+        eventHolderRegistryInfoMap.computeIfAbsent(eventHolder, key -> {
+            Class<?> eventProxyClass = EventHolderProxyCreator.createNewEventHolderProxyClass(eventBridge);
 
-        Class<?> eventProxyClass = EventHolderProxyCreator.createNewEventHolderProxyClass(eventBridge);
+            Constructor<?> eventProxyConstructor = Reflection.findConstructorOrNull(eventProxyClass, EventHolder.class);
 
-        Constructor<?> eventProxyConstructor = Reflection.findConstructor(eventProxyClass, EventHolder.class);
+            Object eventProxy = Reflection.newInstance(eventProxyConstructor, key);
 
-        Object eventProxy = Reflection.newInstance(eventProxyConstructor, eventHolder);
+            runWithEventBus(eventBridge.getBus(), eventBus -> eventBus.register(eventProxy));
 
-        runWithEventBus(eventBridge.getBus(), eventBus -> eventBus.register(eventProxy));
-
-        eventHolderRegistryInfoMap.put(eventHolder, new RegistryInfo(eventBridge, eventHolder));
+            return new RegistryInfo(eventBridge, key);
+        });
     }
 
     public static synchronized void unregister(@NotNull EventHolder<?> eventHolder) {
