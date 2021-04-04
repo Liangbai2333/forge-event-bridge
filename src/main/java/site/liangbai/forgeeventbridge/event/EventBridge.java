@@ -65,7 +65,7 @@ public final class EventBridge {
         return bus;
     }
 
-    public String getSourceASMClassName() {
+    public String getASMSourceName() {
         return "L" + getSource().replace(".", "/") + ";";
     }
 

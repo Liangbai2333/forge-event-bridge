@@ -61,7 +61,7 @@ public final class EventHolderProxyWriter extends ClassWriter implements Opcodes
     }
 
     public void writeListenEventMethod(String methodName) {
-        final String targetClassName = eventBridge.getSourceASMClassName();
+        final String targetClassName = eventBridge.getASMSourceName();
 
         MethodVisitor mv = visitMethod(ACC_PUBLIC, methodName, "(" + targetClassName + ")V", null, null);
 
