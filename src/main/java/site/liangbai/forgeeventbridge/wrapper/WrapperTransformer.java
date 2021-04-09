@@ -29,19 +29,20 @@ import site.liangbai.forgeeventbridge.util.Reflection;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
 public final class WrapperTransformer {
-    private static final Map<Type, Function<Object, Object>> WRAPPER_TRANSFORMER = new HashMap<>();
-
     static {
-        WRAPPER_TRANSFORMER.put(Type.ENTITY, obj ->
+        Type.ENTITY.setTransformer(obj ->
                 TransformerMethods.BUKKIT_ENTITY_GETTER.invokeOrDefault(obj, obj));
 
-        WRAPPER_TRANSFORMER.put(Type.LOCATION, obj -> {
+
+
+        Type.ENTITY.setTransformer(obj ->
+                TransformerMethods.BUKKIT_ENTITY_GETTER.invokeOrDefault(obj, obj));
+
+        Type.LOCATION.setTransformer(obj -> {
             if (obj instanceof BlockPos) {
                 BlockPos blockPos = ((BlockPos) obj);
 
@@ -57,11 +58,11 @@ public final class WrapperTransformer {
             return obj;
         });
 
-        WRAPPER_TRANSFORMER.put(Type.ITEM_STACK, obj ->
+        Type.ITEM_STACK.setTransformer(obj ->
                 TransformerMethods.CRAFT_ITEM_STACK_AS_BUKKIT_COPY
                 .invokeOrDefault(null, obj, obj));
 
-        WRAPPER_TRANSFORMER.put(Type.WORLD, obj ->
+        Type.WORLD.setTransformer(obj ->
                 TransformerMethods.WORLD_GETTER.invokeOrDefault(obj, obj));
     }
 
@@ -71,7 +72,7 @@ public final class WrapperTransformer {
                 .apply(otherObj);
     }
 
-    private enum Type {
+    public enum Type {
         ENTITY(Entity.class),
         WORLD(World.class),
         ITEM_STACK(org.bukkit.inventory.ItemStack.class),
@@ -79,20 +80,32 @@ public final class WrapperTransformer {
         NONE(None.class);
         
         private final Class<?> baseAcceptedClass;
-        
+
+        private Function<Object, Object> transformer;
+
         Type(Class<?> baseAcceptedClass) {
+            this(baseAcceptedClass, obj -> obj);
+        }
+        
+        Type(Class<?> baseAcceptedClass, Function<Object, Object> transformer) {
             this.baseAcceptedClass = baseAcceptedClass;
+            this.transformer = transformer;
         }
         
         public boolean isAcceptedClass(Class<?> clazz) {
             return baseAcceptedClass.isAssignableFrom(clazz);
         }
-        
+
+        public Function<Object, Object> getTransformer() {
+            return transformer;
+        }
+
+        public void setTransformer(Function<Object, Object> transformer) {
+            this.transformer = transformer;
+        }
+
         public Object apply(Object otherObj) {
-            return this == Type.NONE
-                    ? otherObj
-                    : WRAPPER_TRANSFORMER.getOrDefault(this, obj -> obj)
-                    .apply(otherObj);
+            return getTransformer().apply(otherObj);
         }
         
         public static Optional<Type> matchType(Class<?> clazz) {

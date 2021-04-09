@@ -115,7 +115,7 @@ jar {
     }
 
     from {
-		configurations.shaded.collect {
+        configurations.shaded.collect {
             it.isDirectory() ? it : zipTree(it)
         }
     }
