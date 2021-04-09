@@ -1,1 +1,4 @@
 rootProject.name = 'forge-event-bridge'
+include 'forge-event-bridge-core'
+include 'forge-event-bridge-1.15.2-1.16.5'
+

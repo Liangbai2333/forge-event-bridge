@@ -1,141 +1,43 @@
-buildscript {
-    repositories {
-        maven { 
-            name 'forge'
-            url 'https://files.minecraftforge.net/maven'
-        }
-		
-        jcenter()
-    }
-
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: "${forge_gradle_version}"
-    }
-}
-
 plugins {
     id 'org.cadixdev.licenser' version '0.5.0'
 }
 
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'org.cadixdev.licenser'
-
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
-
-group = 'site.liangbai'
-version = "1.2.0"
-
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 
-minecraft {
-    mappings channel: 'official', version: "${minecraft_version}"
+allprojects {
+    group = 'site.liangbai'
+    version = "1.3.0"
 
-    runs {
-        client {
-            workingDirectory project.file('run')
+    apply plugin: 'org.cadixdev.licenser'
 
-            property 'forge.logging.markers', 'REGISTRIES'
-
-            property 'forge.logging.console.level', 'debug'
-
-            mods {
-                forgeeventbridge {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        server {
-            workingDirectory project.file('run')
-
-            property 'forge.logging.markers', 'REGISTRIES'
-
-            property 'forge.logging.console.level', 'debug'
-
-            mods {
-                forgeeventbridge {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        data {
-            workingDirectory project.file('run')
-
-            property 'forge.logging.markers', 'REGISTRIES'
-
-            property 'forge.logging.console.level', 'debug'
-
-            args '--mod', 'forgeeventbridge', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
-
-            mods {
-                forgeeventbridge {
-                    source sourceSets.main
-                }
-            }
-        }
-    }
-}
-    
-repositories {
-    mavenCentral()
-
-    jcenter()
-
-    maven { url = 'http://lss233.littleservice.cn/repositories/minecraft/' }
-}
-
-configurations {
-	implementation.extendsFrom shaded
-}
-
-dependencies {
-    minecraft group: 'net.minecraftforge', name:'forge', version: "${minecraft_version}-${forge_version}"
-
-    // https://mvnrepository.com/artifact/cglib/cglib
-    shaded(group: 'cglib', name: 'cglib', version: '3.3.0') {
-        exclude group: 'org.ow2.asm'
+    configurations {
+        implementation.extendsFrom shaded
     }
 
-    implementation group: 'org.spigotmc', name: 'spigot', version: '1.16.5-R0.1-SNAPSHOT'
-    implementation group: 'org.jetbrains', name: 'annotations', version: '19.0.0'
-}
+    repositories {
+        mavenCentral()
 
-sourceSets.main.resources { srcDir 'src/generated/resources' }
-	
-jar.finalizedBy('reobfJar') 
-	
-jar {
-    manifest {
-        attributes([
-                "Implementation-Title": project.name,
-                "Implementation-Version": project.version,
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-        ])
+        jcenter()
+
+        maven { url = 'http://lss233.littleservice.cn/repositories/minecraft/' }
     }
 
-    from {
-        configurations.shaded.collect {
-            it.isDirectory() ? it : zipTree(it)
+    license {
+        include '**/*.java'
+
+        header = rootProject.file('HEADER.txt')
+
+        ext {
+            organization = 'Liangbai'
+            year = 2021
         }
     }
-}
 
-license {
-	include '**/*.java'
-		
-	header = rootProject.file('HEADER.txt')
+    tasks.withType(GroovyCompile) {
+        options.encoding = "UTF-8"
+    }
 
-	ext {
-	    organization = 'Liangbai'
-	    year = 2021
-	}
-}
-
-tasks.withType(GroovyCompile) {
-    options.encoding = "UTF-8"
-}
-
-tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+    }
 }
