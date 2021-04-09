@@ -21,10 +21,13 @@ package site.liangbai.forgeeventbridge.v1_15_2_1_16_5;
 import net.minecraftforge.fml.common.Mod;
 import site.liangbai.forgeeventbridge.ForgeEventBridge;
 import site.liangbai.forgeeventbridge.v1_15_2_1_16_5.serviceprovider.ServiceProviderImpl;
+import site.liangbai.forgeeventbridge.v1_15_2_1_16_5.transformer.Transformer;
 
 @Mod("forgeeventbridge")
 public final class ForgeEventBridgeMod {
     public ForgeEventBridgeMod() {
         ForgeEventBridge.setServiceProvider(new ServiceProviderImpl());
+
+        Transformer.init();
     }
 }

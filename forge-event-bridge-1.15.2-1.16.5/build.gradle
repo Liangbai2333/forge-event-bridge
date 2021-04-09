@@ -75,6 +75,8 @@ dependencies {
     minecraft group: 'net.minecraftforge', name:'forge', version: "${minecraft_version}-${forge_version}"
 
     implementation project(':forge-event-bridge-core')
+
+    implementation group: 'org.spigotmc', name: 'spigot', version: "${spigot_version}"
 }
 
 jar {

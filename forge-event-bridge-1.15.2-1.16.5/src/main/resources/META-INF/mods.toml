@@ -10,10 +10,10 @@ description = '''
     Help Bukkit plugins listen to mod events.
     '''
 displayName = "Forge-Event-Bridge"
-modId = "site.liangbai.forgeeventbridge"
+modId = "forgeeventbridge"
 version = "${file.jarVersion}"
 
-[[dependencies.site.liangbai.forgeeventbridge]]
+[[dependencies.forgeeventbridge]]
 mandatory = true
 modId = "forge"
 ordering = "NONE"
