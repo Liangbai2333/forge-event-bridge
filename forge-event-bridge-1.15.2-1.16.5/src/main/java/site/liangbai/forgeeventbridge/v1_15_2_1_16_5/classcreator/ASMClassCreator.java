@@ -27,12 +27,13 @@ import site.liangbai.forgeeventbridge.util.Reflection;
 import java.lang.reflect.Method;
 
 public final class ASMClassCreator implements IClassCreator {
+    public static final TransformingClassLoader TRANSFORMING_CLASS_LOADER
+            = getTransformingClassLoader();
+
     @Override
     public Class<?> create(String name, byte[] classBuffer) {
-        TransformingClassLoader transformingClassLoader = getTransformingClassLoader();
-
-        if (transformingClassLoader != null) {
-            return transformingClassLoader.getClass(name, classBuffer);
+        if (TRANSFORMING_CLASS_LOADER != null) {
+            return TRANSFORMING_CLASS_LOADER.getClass(name, classBuffer);
         }
 
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
