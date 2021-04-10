@@ -62,7 +62,7 @@ public final class Transformer {
                 return new Location(null, chunkPos.x, 0, chunkPos.z);
             }
 
-            return null;
+            return obj;
         });
 
         WrapperTransformer.Type.ITEM_STACK.setTransformer(obj ->
