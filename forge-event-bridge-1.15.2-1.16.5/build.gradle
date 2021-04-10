@@ -74,6 +74,10 @@ repositories {
 dependencies {
     minecraft group: 'net.minecraftforge', name:'forge', version: "${minecraft_version}-${forge_version}"
 
+    shaded(group: 'cglib', name: 'cglib', version: '3.3.0') {
+        exclude group: 'org.ow2.asm'
+    }
+
     implementation project(':forge-event-bridge-core')
 
     implementation group: 'org.spigotmc', name: 'spigot', version: "${spigot_version}"
@@ -90,6 +94,12 @@ jar {
 
     from {
         project(':forge-event-bridge-core').tasks.jar.outputs.files.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+
+    from {
+        configurations.shaded.collect {
             it.isDirectory() ? it : zipTree(it)
         }
     }
