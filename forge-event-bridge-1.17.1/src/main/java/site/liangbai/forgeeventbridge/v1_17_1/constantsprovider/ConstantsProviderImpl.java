@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package site.liangbai.forgeeventbridge.v1_15_2_1_16_5.constantsprovider;
+package site.liangbai.forgeeventbridge.v1_17_1.constantsprovider;
 
 import site.liangbai.forgeeventbridge.asm.constantsprovider.Constant;
 import site.liangbai.forgeeventbridge.asm.constantsprovider.IConstantsProvider;
@@ -25,6 +25,7 @@ import java.util.HashMap;
 
 public final class ConstantsProviderImpl implements IConstantsProvider {
     private static final HashMap<Constant, String> constantStringEnumMap = new HashMap<>();
+
 
     static {
         put(Constant.EVENT_HOLDER_CLASS_NAME, "Lsite/liangbai/forgeeventbridge/event/EventHolder;");

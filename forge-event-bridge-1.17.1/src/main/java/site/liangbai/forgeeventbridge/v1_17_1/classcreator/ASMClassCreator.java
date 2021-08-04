@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package site.liangbai.forgeeventbridge.v1_15_2_1_16_5.classcreator;
+package site.liangbai.forgeeventbridge.v1_17_1.classcreator;
 
 import cpw.mods.modlauncher.TransformingClassLoader;
 import net.minecraftforge.common.MinecraftForge;
@@ -32,11 +32,7 @@ public final class ASMClassCreator implements IClassCreator {
 
     @Override
     public Class<?> create(String name, byte[] classBuffer) {
-        if (TRANSFORMING_CLASS_LOADER != null) {
-            return TRANSFORMING_CLASS_LOADER.getClass(name, classBuffer);
-        }
-
-        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        ClassLoader classLoader = TRANSFORMING_CLASS_LOADER != null ? TRANSFORMING_CLASS_LOADER : ClassLoader.getSystemClassLoader();
 
         Method defineMethod = Reflection.findDeclaredMethodOrNull(ClassLoader.class, "defineClass", String.class, byte[].class, int.class, int.class);
 

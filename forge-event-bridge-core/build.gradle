@@ -2,9 +2,7 @@ plugins {
     id 'java'
 }
 
-repositories {
-    mavenCentral()
-}
+java.toolchain.languageVersion = JavaLanguageVersion.of(16)
 
 dependencies {
     // https://mvnrepository.com/artifact/cglib/cglib
@@ -13,6 +11,6 @@ dependencies {
     // https://mvnrepository.com/artifact/org.ow2.asm/asm
     implementation group: 'org.ow2.asm', name: 'asm', version: '9.1'
 
-    implementation group: 'org.spigotmc', name: 'spigot', version: "${spigot_version}"
+    implementation 'ink.ptms.core:v11701:11701:universal'
     implementation group: 'org.jetbrains', name: 'annotations', version: '19.0.0'
 }

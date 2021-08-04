@@ -16,9 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package site.liangbai.forgeeventbridge.v1_15_2_1_16_5.transformer;
+package site.liangbai.forgeeventbridge.v1_17_1.transformer;
 
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import site.liangbai.forgeeventbridge.util.NMSVersion;
 import site.liangbai.forgeeventbridge.util.Reflection;
 
@@ -26,7 +26,7 @@ import java.lang.reflect.Method;
 
 public enum TransformerMethod {
     BUKKIT_ENTITY_GETTER
-            (Reflection.findMethodOrNull(net.minecraft.entity.Entity.class, "getBukkitEntity")),
+            (Reflection.findMethodOrNull(net.minecraft.world.entity.Entity.class, "getBukkitEntity")),
 
     CRAFT_ITEM_STACK_AS_BUKKIT_COPY
             (Reflection.findMethodOrNull(
@@ -36,7 +36,7 @@ public enum TransformerMethod {
             ),
 
     WORLD_GETTER
-            (Reflection.findMethodOrNull(net.minecraft.world.World.class, "getWorld"));
+            (Reflection.findMethodOrNull(net.minecraft.world.level.Level.class, "getWorld"));
 
     private final Method method;
 

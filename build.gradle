@@ -1,12 +1,12 @@
 plugins {
-    id 'org.cadixdev.licenser' version '0.5.0'
+    id 'org.cadixdev.licenser' version '0.6.1'
 }
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 
 allprojects {
     group = 'site.liangbai'
-    version = "1.3.0"
+    version = "1.3.2"
 
     apply plugin: 'org.cadixdev.licenser'
 
@@ -17,9 +17,7 @@ allprojects {
     repositories {
         mavenCentral()
 
-        jcenter()
-
-        maven { url = 'http://lss233.littleservice.cn/repositories/minecraft/' }
+        maven { url "https://repo2s.ptms.ink/repository/maven-releases/" }
     }
 
     license {

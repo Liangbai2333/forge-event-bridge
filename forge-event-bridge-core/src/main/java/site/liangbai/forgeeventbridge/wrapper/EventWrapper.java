@@ -46,7 +46,7 @@ public final class EventWrapper<T extends EventWrapper.EventObject> extends Obje
         public abstract void setCanceled(boolean cancel);
     }
 
-    private static class EventObjectProxyGenerator<T extends EventObject> implements MethodInterceptor {
+    private record EventObjectProxyGenerator<T extends EventObject>(Object event) implements MethodInterceptor {
 
         public static Class<?> mapClass(Class<?> clazz) {
             if (clazz.equals(int.class)) {
@@ -70,12 +70,6 @@ public final class EventWrapper<T extends EventWrapper.EventObject> extends Obje
             return clazz;
         }
 
-        private final Object event;
-
-        public EventObjectProxyGenerator(Object event) {
-            this.event = event;
-        }
-
         public T generate(Class<T> eventObjectClass) {
             Enhancer enhancer = new Enhancer();
 
@@ -90,7 +84,7 @@ public final class EventWrapper<T extends EventWrapper.EventObject> extends Obje
             if (Modifier.isAbstract(method.getModifiers())) {
                 Method eventMethod = event.getClass().getMethod(method.getName(), method.getParameterTypes());
 
-                Object returnValue = Reflection.invokeMethodOrNull(Reflection.setAccessible(eventMethod), event, args);
+                Object returnValue = Reflection.invokeMethodOrNull(eventMethod, event, args);
 
                 if (returnValue == null) {
                     return null;

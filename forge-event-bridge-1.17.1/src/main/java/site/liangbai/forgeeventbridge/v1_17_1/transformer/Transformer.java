@@ -16,13 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package site.liangbai.forgeeventbridge.v1_15_2_1_16_5.transformer;
+package site.liangbai.forgeeventbridge.v1_17_1.transformer;
 
-import net.minecraft.dispenser.Position;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.Rotations;
-import net.minecraft.util.math.vector.Vector3d;
+import com.mojang.math.Vector3d;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Position;
+import net.minecraft.core.Rotations;
+import net.minecraft.world.level.ChunkPos;
 import org.bukkit.Location;
 import site.liangbai.forgeeventbridge.wrapper.WrapperTransformer;
 
@@ -32,32 +32,27 @@ public final class Transformer {
                 TransformerMethod.BUKKIT_ENTITY_GETTER.invokeOrDefault(obj, obj));
 
         WrapperTransformer.Type.LOCATION.setTransformer(obj -> {
-            if (obj instanceof BlockPos) {
-                BlockPos blockPos = ((BlockPos) obj);
+            if (obj instanceof BlockPos blockPos) {
 
                 return new Location(null, blockPos.getX(), blockPos.getY(), blockPos.getZ());
             }
 
-            if (obj instanceof Vector3d) {
-                Vector3d vector3d = ((Vector3d) obj);
+            if (obj instanceof Vector3d vector3d) {
 
-                return new Location(null, vector3d.x(), vector3d.y(), vector3d.z());
+                return new Location(null, vector3d.x, vector3d.y, vector3d.z);
             }
 
-            if (obj instanceof Position) {
-                Position position = ((Position) obj);
+            if (obj instanceof Position position) {
 
-                return new Location(null, position.x(), position.y(), position.z());
+                return new Location(null, position.getX(), position.getY(), position.getZ());
             }
 
-            if (obj instanceof Rotations) {
-                Rotations rotations = ((Rotations) obj);
+            if (obj instanceof Rotations rotations) {
 
                 return new Location(null, rotations.getX(), rotations.getY(), rotations.getZ());
             }
 
-            if (obj instanceof ChunkPos) {
-                ChunkPos chunkPos = ((ChunkPos) obj);
+            if (obj instanceof ChunkPos chunkPos) {
 
                 return new Location(null, chunkPos.x, 0, chunkPos.z);
             }

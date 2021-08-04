@@ -1,0 +1,52 @@
+buildscript {
+    repositories {
+        maven { url = 'https://maven.minecraftforge.net' }
+        mavenCentral()
+    }
+    dependencies {
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+    }
+}
+apply plugin: 'net.minecraftforge.gradle'
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(16)
+
+minecraft {
+    mappings channel: 'official', version: "${minecraft_version}"
+}
+
+dependencies {
+    minecraft group: 'net.minecraftforge', name:'forge', version: "${minecraft_version}-${forge_version}"
+
+    shaded(group: 'cglib', name: 'cglib', version: '3.3.0') {
+        exclude group: 'org.ow2.asm'
+    }
+
+    implementation project(':forge-event-bridge-core')
+
+    implementation 'ink.ptms.core:v11701:11701:universal'
+}
+
+jar {
+    manifest {
+        attributes([
+                "Implementation-Title": project.name,
+                "Implementation-Version": project.version,
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+
+    from {
+        project(':forge-event-bridge-core').tasks.jar.outputs.files.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+
+    from {
+        configurations.shaded.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+}
+
+jar.finalizedBy('reobfJar')

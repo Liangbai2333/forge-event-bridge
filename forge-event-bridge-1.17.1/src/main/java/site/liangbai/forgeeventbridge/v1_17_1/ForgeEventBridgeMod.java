@@ -16,17 +16,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package site.liangbai.forgeeventbridge.v1_15_2_1_16_5;
+package site.liangbai.forgeeventbridge.v1_17_1;
 
 import net.minecraftforge.fml.common.Mod;
 import site.liangbai.forgeeventbridge.ForgeEventBridge;
-import site.liangbai.forgeeventbridge.v1_15_2_1_16_5.serviceprovider.ServiceProviderImpl;
-import site.liangbai.forgeeventbridge.v1_15_2_1_16_5.transformer.Transformer;
+import site.liangbai.forgeeventbridge.v1_17_1.serviceprovider.ServiceProviderImpl;
+import site.liangbai.forgeeventbridge.v1_17_1.transformer.Transformer;
 
 @Mod("forgeeventbridge")
 public final class ForgeEventBridgeMod {
     public ForgeEventBridgeMod() {
         ForgeEventBridge.setServiceProvider(new ServiceProviderImpl());
+
 
         Transformer.init();
     }

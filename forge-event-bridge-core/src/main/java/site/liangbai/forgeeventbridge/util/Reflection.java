@@ -18,9 +18,51 @@
 
 package site.liangbai.forgeeventbridge.util;
 
-import java.lang.reflect.*;
+import sun.misc.Unsafe;
+
+import java.lang.invoke.MethodHandles;
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 public final class Reflection {
+    public static final MethodHandles.Lookup TRUSTED_LOOKUP = getTrustedLookup();
+
+    static {
+        Field module;
+        try {
+            module = Class.class.getDeclaredField("module");
+            Unsafe unsafe = UnsafeUtil.getUnsafe();
+            long offset = unsafe.objectFieldOffset(module);
+            unsafe.putObject(Reflection.class, offset, Object.class.getModule());
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static MethodHandles.Lookup getTrustedLookup() {
+        try {
+            Field field = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
+
+            Unsafe unsafe = UnsafeUtil.getUnsafe();
+
+            long offset = unsafe.staticFieldOffset(field);
+
+            return (MethodHandles.Lookup) unsafe.getObject(MethodHandles.Lookup.class, offset);
+        } catch (NoSuchFieldException e) {
+            throw new IllegalStateException("could not get trusted lookup", e);
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    public static <T extends AccessibleObject> T setAccessible(T accessibleObject) {
+        if (!accessibleObject.isAccessible()) {
+            accessibleObject.setAccessible(true);
+        }
+        return accessibleObject;
+    }
+
     public static Class<?> findClassOrNull(String name) {
         try {
             return Class.forName(name);
@@ -41,22 +83,14 @@ public final class Reflection {
         }
     }
 
-    public static <T extends AccessibleObject> T setAccessible(T accessibleObject) {
-        if (!accessibleObject.isAccessible()) {
-            accessibleObject.setAccessible(true);
-        }
-
-        return accessibleObject;
-    }
-
     public static Object invokeMethodOrNull(Method method, Object obj, Object... args) {
         if (method == null) {
             return null;
         }
 
         try {
-            return method.invoke(obj, args);
-        } catch (IllegalAccessException | InvocationTargetException e) {
+            return setAccessible(method).invoke(obj, args);
+        } catch (Throwable e) {
             return null;
         }
     }
@@ -71,8 +105,8 @@ public final class Reflection {
         }
 
         try {
-            return field.get(obj);
-        } catch (IllegalAccessException e) {
+            return setAccessible(field).get(obj);
+        } catch (Throwable e) {
             return null;
         }
     }
@@ -87,8 +121,8 @@ public final class Reflection {
         }
 
         try {
-            field.set(obj, value);
-        } catch (IllegalAccessException ignored) { }
+            setAccessible(field).set(obj, value);
+        } catch (Throwable ignored) { }
     }
 
     public static Field findFieldOrNull(Class<?> cls, String name) {
@@ -96,8 +130,7 @@ public final class Reflection {
 
         try {
             field = cls.getField(name);
-
-            return Reflection.setAccessible(field);
+            return setAccessible(field);
         } catch (NoSuchFieldException e) {
             return null;
         }
@@ -109,7 +142,7 @@ public final class Reflection {
         try {
             method = cls.getMethod(name, params);
 
-            return Reflection.setAccessible(method);
+            return setAccessible(method);
         } catch (NoSuchMethodException e) {
             return null;
         }
@@ -121,17 +154,16 @@ public final class Reflection {
         }
 
         try {
-            return constructor.newInstance(args);
-        } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
+            return setAccessible(constructor).newInstance(args);
+        } catch (Throwable e) {
             return null;
         }
     }
 
     public static <T> Constructor<T> findConstructorOrNull(Class<T> cls, Class<?>... params) {
         try {
-            Constructor<T> constructor = cls.getConstructor(params);
 
-            return Reflection.setAccessible(constructor);
+            return setAccessible(cls.getConstructor(params));
         } catch (NoSuchMethodException e) {
             return null;
         }
@@ -143,7 +175,7 @@ public final class Reflection {
         try {
             method = cls.getDeclaredMethod(name, params);
 
-            return Reflection.setAccessible(method);
+            return setAccessible(method);
         } catch (NoSuchMethodException e) {
             return null;
         }
