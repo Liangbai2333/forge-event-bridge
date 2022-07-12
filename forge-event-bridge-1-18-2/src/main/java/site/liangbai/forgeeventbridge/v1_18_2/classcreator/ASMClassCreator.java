@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package site.liangbai.forgeeventbridge.v1_17_1.classcreator;
+package site.liangbai.forgeeventbridge.v1_18_2.classcreator;
 
 import cpw.mods.modlauncher.TransformingClassLoader;
 import net.minecraftforge.common.MinecraftForge;

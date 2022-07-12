@@ -1,0 +1,5 @@
+name: TestToEventBridge
+version: 1.0
+author: Liangbai
+api-version: 1.13
+main: site.liangbai.Main

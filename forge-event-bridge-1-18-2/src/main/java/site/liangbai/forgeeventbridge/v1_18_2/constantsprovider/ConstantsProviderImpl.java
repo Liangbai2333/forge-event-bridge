@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package site.liangbai.forgeeventbridge.v1_17_1.constantsprovider;
+package site.liangbai.forgeeventbridge.v1_18_2.constantsprovider;
 
 import site.liangbai.forgeeventbridge.asm.constantsprovider.Constant;
 import site.liangbai.forgeeventbridge.asm.constantsprovider.IConstantsProvider;

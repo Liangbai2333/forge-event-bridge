@@ -16,19 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package site.liangbai.forgeeventbridge.v1_17_1;
+package site.liangbai;
 
-import net.minecraftforge.fml.common.Mod;
-import site.liangbai.forgeeventbridge.ForgeEventBridge;
-import site.liangbai.forgeeventbridge.v1_17_1.serviceprovider.ServiceProviderImpl;
-import site.liangbai.forgeeventbridge.v1_17_1.transformer.Transformer;
+import site.liangbai.forgeeventbridge.event.EventHolder;
+import site.liangbai.forgeeventbridge.wrapper.EventWrapper;
 
-@Mod("forgeeventbridge")
-public final class ForgeEventBridgeMod {
-    public ForgeEventBridgeMod() {
-        ForgeEventBridge.setServiceProvider(new ServiceProviderImpl());
-
-
-        Transformer.init();
+public class TestListener implements EventHolder<EventWrapper.EventObject> {
+    @Override
+    public void handle(EventWrapper<EventWrapper.EventObject> eventWrapper) {
+        System.out.println("ok: " + eventWrapper.getObject().getClass().getSimpleName());
     }
 }

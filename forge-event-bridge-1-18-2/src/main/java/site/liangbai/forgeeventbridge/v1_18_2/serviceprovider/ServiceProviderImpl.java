@@ -16,16 +16,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package site.liangbai.forgeeventbridge.v1_17_1.serviceprovider;
+package site.liangbai.forgeeventbridge.v1_18_2.serviceprovider;
 
 import site.liangbai.forgeeventbridge.asm.classcreator.IClassCreator;
 import site.liangbai.forgeeventbridge.asm.constantsprovider.IConstantsProvider;
 import site.liangbai.forgeeventbridge.event.EventBridge;
 import site.liangbai.forgeeventbridge.event.IEventBusProxy;
 import site.liangbai.forgeeventbridge.serviceprovider.IServiceProvider;
-import site.liangbai.forgeeventbridge.v1_17_1.classcreator.ASMClassCreator;
-import site.liangbai.forgeeventbridge.v1_17_1.constantsprovider.ConstantsProviderImpl;
-import site.liangbai.forgeeventbridge.v1_17_1.event.EventBusProxyImpl;
+import site.liangbai.forgeeventbridge.v1_18_2.classcreator.ASMClassCreator;
+import site.liangbai.forgeeventbridge.v1_18_2.constantsprovider.ConstantsProviderImpl;
+import site.liangbai.forgeeventbridge.v1_18_2.event.EventBusProxyImpl;
 
 public final class ServiceProviderImpl implements IServiceProvider {
     private static final IClassCreator CLASS_CREATOR = new ASMClassCreator();

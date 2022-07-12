@@ -2,15 +2,12 @@ plugins {
     id 'java'
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(16)
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 dependencies {
-    // https://mvnrepository.com/artifact/cglib/cglib
-    implementation(group: 'cglib', name: 'cglib', version: '3.3.0')
+    implementation 'cglib:cglib:3.3.0'
+    implementation 'org.ow2.asm:asm:9.3'
 
-    // https://mvnrepository.com/artifact/org.ow2.asm/asm
-    implementation group: 'org.ow2.asm', name: 'asm', version: '9.1'
-
-    implementation 'ink.ptms.core:v11701:11701:universal'
+    implementation("ink.ptms.core:v11802:11802-minimize:universal")
     implementation group: 'org.jetbrains', name: 'annotations', version: '19.0.0'
 }

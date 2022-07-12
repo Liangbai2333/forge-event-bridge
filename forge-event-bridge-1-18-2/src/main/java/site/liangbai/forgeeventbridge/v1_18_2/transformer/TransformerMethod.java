@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package site.liangbai.forgeeventbridge.v1_17_1.transformer;
+package site.liangbai.forgeeventbridge.v1_18_2.transformer;
 
 import net.minecraft.world.item.ItemStack;
 import site.liangbai.forgeeventbridge.util.NMSVersion;

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package site.liangbai.forgeeventbridge.v1_17_1.transformer;
+package site.liangbai.forgeeventbridge.v1_18_2.transformer;
 
 import com.mojang.math.Vector3d;
 import net.minecraft.core.BlockPos;
@@ -44,7 +44,7 @@ public final class Transformer {
 
             if (obj instanceof Position position) {
 
-                return new Location(null, position.getX(), position.getY(), position.getZ());
+                return new Location(null, position.x(), position.y(), position.z());
             }
 
             if (obj instanceof Rotations rotations) {
