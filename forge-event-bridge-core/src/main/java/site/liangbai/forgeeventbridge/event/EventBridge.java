@@ -31,12 +31,15 @@ public final class EventBridge {
 
     private final Bus bus;
 
+    private final IEventBusProxy busProxy;
+
     private final boolean receiveCanceled;
 
     public EventBridge(
             String source,
             EventPriority priority,
             Bus bus,
+            IEventBusProxy busProxy,
             boolean receiveCanceled
     ) {
         Objects.requireNonNull(source);
@@ -46,6 +49,7 @@ public final class EventBridge {
         this.source = source;
         this.priority = priority;
         this.bus = bus;
+        this.busProxy = busProxy;
         this.receiveCanceled = receiveCanceled;
     }
 
@@ -65,6 +69,10 @@ public final class EventBridge {
         return bus;
     }
 
+    public IEventBusProxy getBusProxy() {
+        return busProxy;
+    }
+
     public String getASMSourceName() {
         return "L" + getSource().replace(".", "/") + ";";
     }
@@ -75,6 +83,8 @@ public final class EventBridge {
         private EventPriority priority = EventPriority.NORMAL;
 
         private Bus bus = Bus.FORGE;
+
+        private IEventBusProxy busProxy = null;
 
         private boolean receiveCanceled;
 
@@ -94,6 +104,13 @@ public final class EventBridge {
             return this;
         }
 
+        public Builder bus(IEventBusProxy busProxy) {
+            this.bus = Bus.CUSTOM;
+            this.busProxy = busProxy;
+
+            return this;
+        }
+
         public Builder priority(EventPriority priority) {
             this.priority = priority;
 
@@ -107,12 +124,13 @@ public final class EventBridge {
         }
 
         public EventBridge build() {
-            return new EventBridge(source, priority, bus, receiveCanceled);
+            return new EventBridge(source, priority, bus, busProxy, receiveCanceled);
         }
     }
 
     public enum Bus {
         FORGE,
-        MOD
+        MOD,
+        CUSTOM
     }
 }

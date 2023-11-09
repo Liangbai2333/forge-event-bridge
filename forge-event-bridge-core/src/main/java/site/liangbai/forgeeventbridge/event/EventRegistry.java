@@ -37,14 +37,14 @@ public final class EventRegistry {
 
         eventHolderRegistryInfoMap.computeIfAbsent(eventHolder, key -> {
             Class<?> eventProxyClass = EventHolderProxyCreator.createNewEventHolderProxyClass(eventBridge);
-
             Constructor<?> eventProxyConstructor = Reflection.findConstructorOrNull(eventProxyClass, EventHolder.class);
-
             Object eventProxy = Reflection.newInstance(eventProxyConstructor, key);
-
             IServiceProvider serviceProvider = ForgeEventBridge.getServiceProvider();
-
-            serviceProvider.getEventBusProxy(eventBridge.getBus()).register(eventProxy);
+            if (eventBridge.getBus() == EventBridge.Bus.CUSTOM) {
+                eventBridge.getBusProxy().register(eventProxy);
+            } else {
+                serviceProvider.getEventBusProxy(eventBridge.getBus()).register(eventProxy);
+            }
 
             return new RegistryInfo(eventBridge, key);
         });
@@ -55,12 +55,13 @@ public final class EventRegistry {
 
         eventHolderRegistryInfoMap.computeIfPresent(eventHolder, (key, registryInfo) -> {
             EventBridge eventBridge = registryInfo.getEventBridge();
-
             Object eventProxy = registryInfo.getEventProxy();
-
             IServiceProvider serviceProvider = ForgeEventBridge.getServiceProvider();
-
-            serviceProvider.getEventBusProxy(eventBridge.getBus()).unregister(eventProxy);
+            if (eventBridge.getBus() == EventBridge.Bus.CUSTOM) {
+                eventBridge.getBusProxy().unregister(eventProxy);
+            } else {
+                serviceProvider.getEventBusProxy(eventBridge.getBus()).unregister(eventProxy);
+            }
 
             return null;
         });

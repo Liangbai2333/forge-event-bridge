@@ -18,9 +18,37 @@
 
 package site.liangbai.forgeeventbridge.util;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.*;
 
+@SuppressWarnings("unchecked")
 public final class Reflection {
+    private static final MethodHandles.Lookup lookup = MethodHandles.lookup();
+
+    public static MethodHandles.Lookup getLookup() {
+        return lookup;
+    }
+
+    @NotNull
+    public static MethodHandle unreflect(Method method) {
+        try {
+            return getLookup().unreflect(setAccessible(method));
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException("could not unreflect the method: " + method.getName(), e);
+        }
+    }
+
+    public static Object invokeMHOrNull(MethodHandle mh, Object obj, Object... args) {
+        try {
+            return mh.invoke(obj, args);
+        } catch (Throwable e) {
+            return null;
+        }
+    }
+
     public static Class<?> findClassOrNull(String name) {
         try {
             return Class.forName(name);
@@ -49,20 +77,16 @@ public final class Reflection {
         return accessibleObject;
     }
 
-    public static Object invokeMethodOrNull(Method method, Object obj, Object... args) {
+    public static <T> T invokeMethodOrNull(Method method, Object obj, Object... args) {
         if (method == null) {
             return null;
         }
 
         try {
-            return method.invoke(obj, args);
+            return (T) method.invoke(obj, args);
         } catch (IllegalAccessException | InvocationTargetException e) {
             return null;
         }
-    }
-
-    public static <T> T invokeMethodOrNull(Method method, Object obj, Class<T> cast, Object... args) {
-        return cast.cast(invokeMethodOrNull(method, obj, args));
     }
 
     public static Object getFieldObjOrNull(Field field, Object obj) {

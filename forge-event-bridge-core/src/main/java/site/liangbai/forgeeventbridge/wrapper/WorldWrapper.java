@@ -26,6 +26,6 @@ public final class WorldWrapper extends ObjectWrapper {
     }
 
     public World asWorld() {
-        return (World) WrapperTransformer.require(World.class, getObject());
+        return WrapperTransformer.require(World.class, getObject());
     }
 }

@@ -26,6 +26,6 @@ public class EntityWrapper extends ObjectWrapper {
     }
 
     public Entity asEntity() {
-        return (Entity) WrapperTransformer.require(Entity.class, getObject());
+        return WrapperTransformer.require(Entity.class, getObject());
     }
 }

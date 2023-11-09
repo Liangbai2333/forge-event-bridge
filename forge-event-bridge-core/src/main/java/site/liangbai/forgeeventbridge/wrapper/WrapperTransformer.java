@@ -28,8 +28,9 @@ import java.util.function.Function;
 
 public final class WrapperTransformer {
 
-    public static Object require(Class<?> requireType, Object otherObj) {
-        return Type.matchType(requireType)
+    @SuppressWarnings("unchecked")
+    public static <T> T require(Class<?> requireType, Object otherObj) {
+        return (T) Type.matchType(requireType)
                 .orElse(Type.NONE)
                 .apply(otherObj);
     }

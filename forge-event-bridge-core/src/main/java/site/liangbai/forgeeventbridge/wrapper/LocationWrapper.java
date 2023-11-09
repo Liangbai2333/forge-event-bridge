@@ -26,6 +26,6 @@ public final class LocationWrapper extends ObjectWrapper {
     }
 
     public Location asLocation() {
-        return (Location) WrapperTransformer.require(Location.class, getObject());
+        return WrapperTransformer.require(Location.class, getObject());
     }
 }

@@ -26,6 +26,6 @@ public class ItemStackWrapper extends ObjectWrapper {
     }
 
     public ItemStack asItemStack() {
-        return (ItemStack) WrapperTransformer.require(ItemStack.class, getObject());
+        return WrapperTransformer.require(ItemStack.class, getObject());
     }
 }
